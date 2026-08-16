@@ -140,22 +140,26 @@ class JewelryRemixCliTests(unittest.TestCase):
         self.assertEqual(validate.returncode, 0, validate.stderr)
 
     def test_prepare_accepts_repo_relative_brief_path_used_by_skill(self) -> None:
-        brief_path = self.workspace / "remix-brief.json"
-        brief_path.write_text(json.dumps(self.brief(4), ensure_ascii=False), encoding="utf-8")
-        result = subprocess.run(
-            [
-                sys.executable,
-                str(REMIX),
-                "prepare",
-                "--workspace",
-                str(self.workspace),
-                "--brief",
-                os.path.relpath(brief_path, ROOT),
-            ],
-            cwd=ROOT,
-            text=True,
-            capture_output=True,
-        )
+        with tempfile.TemporaryDirectory(dir=ROOT) as temp:
+            workspace = Path(temp) / "artifacts" / "runs" / "remix-test"
+            (workspace / "references").mkdir(parents=True)
+            (workspace / "references" / "source.png").write_bytes(self.source.read_bytes())
+            brief_path = workspace / "remix-brief.json"
+            brief_path.write_text(json.dumps(self.brief(4), ensure_ascii=False), encoding="utf-8")
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(REMIX),
+                    "prepare",
+                    "--workspace",
+                    str(workspace),
+                    "--brief",
+                    os.path.relpath(brief_path, ROOT),
+                ],
+                cwd=ROOT,
+                text=True,
+                capture_output=True,
+            )
         self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_prepare_eight_keeps_stable_ids(self) -> None:

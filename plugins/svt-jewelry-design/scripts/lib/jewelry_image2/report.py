@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shlex
 import subprocess
 from pathlib import Path
@@ -76,8 +77,14 @@ def progress_line(workspace: Path, result: dict[str, Any], completed: int, total
         handle.write(json.dumps(event, ensure_ascii=False) + "\n")
     if event_command:
         try:
+            command = shlex.split(event_command, posix=os.name != "nt")
+            if os.name == "nt":
+                command = [
+                    token[1:-1] if len(token) >= 2 and token[0] == token[-1] and token[0] in {"'", '"'} else token
+                    for token in command
+                ]
             hook = subprocess.run(
-                shlex.split(event_command), input=json.dumps(event, ensure_ascii=False), text=True,
+                command, input=json.dumps(event, ensure_ascii=False), text=True,
                 cwd=workspace, capture_output=True, check=False, timeout=30,
             )
             hook_warning = None if hook.returncode == 0 else {

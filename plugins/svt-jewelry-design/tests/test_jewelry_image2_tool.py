@@ -114,6 +114,27 @@ class JewelryImage2ToolTests(unittest.TestCase):
                 self.workspace / "missing-message", worker, 0, True, set(),
             )
 
+    def test_recovery_accepts_exact_generated_path_with_spaces(self) -> None:
+        worker = Path(self.tmp.name) / "codex home with spaces"
+        generated = worker / "generated_images" / "session" / "result image.png"
+        generated.parent.mkdir(parents=True)
+        generated.write_bytes(TOOL.TINY_PNG_BYTES)
+        output = self.workspace / "outputs" / "result.png"
+
+        recovered = TOOL.recover_generated_image(
+            self.workspace,
+            output,
+            subprocess.CompletedProcess(["fake"], 0, f"selected {generated}", ""),
+            self.workspace / "missing-message",
+            worker,
+            0,
+            False,
+            set(),
+        )
+
+        self.assertEqual(recovered, str(generated))
+        self.assertEqual(output.read_bytes(), TOOL.TINY_PNG_BYTES)
+
 
     def test_preview_gallery_only_lists_existing_workspace_images(self) -> None:
         self.run_tool("init", "--workspace", str(self.workspace))

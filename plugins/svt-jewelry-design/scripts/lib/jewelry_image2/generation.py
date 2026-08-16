@@ -81,7 +81,10 @@ def codex_generate_command(
 def image_paths_from_text(text: str, workspace: Path) -> list[Path]:
     if not text:
         return []
-    pattern = re.compile(r"(?P<path>(?:/|\.{0,2}/|[A-Za-z0-9_.-]+/)[^\s'\"<>]+?\.(?:png|jpg|jpeg|webp))", re.I)
+    pattern = re.compile(
+        r"(?P<path>(?:[A-Za-z]:[\\/]|/|\.{0,2}[\\/]|[A-Za-z0-9_.-]+[\\/])[^\s'\"<>]+?\.(?:png|jpg|jpeg|webp))",
+        re.I,
+    )
     paths: dict[str, Path] = {}
     for match in pattern.finditer(text):
         raw = match.group("path").rstrip(").,;:")
@@ -396,6 +399,15 @@ def recover_generated_image(
     generated_root = codex_home / "generated_images"
     hashes = existing_hashes or set()
     candidates: dict[str, Path] = {}
+    if generated_root.exists():
+        for candidate in generated_root.rglob("*"):
+            if not candidate.is_file() or candidate.suffix.lower() not in IMAGE_SUFFIXES:
+                continue
+            if str(candidate) not in text and candidate.as_posix() not in text:
+                continue
+            if not looks_like_image_file(candidate) or file_hash(candidate) in hashes:
+                continue
+            candidates[str(candidate.resolve())] = candidate
     for candidate in image_paths_from_text(text, workspace):
         if candidate.resolve() == output_path.resolve():
             continue
@@ -484,7 +496,7 @@ def run_generation_job(
     prompt_text_for_generation = build_executed_prompt(prompt_text, ratio, ratio_source)
     executed_prompt_sha256 = text_sha256(prompt_text_for_generation)
     executed_prompt_path.parent.mkdir(parents=True, exist_ok=True)
-    executed_prompt_path.write_text(prompt_text_for_generation, encoding="utf-8")
+    executed_prompt_path.write_text(prompt_text_for_generation, encoding="utf-8", newline="\n")
     prompt_contract = {
         "ratio": ratio,
         "ratio_source": ratio_source,
