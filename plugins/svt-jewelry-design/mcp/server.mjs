@@ -7,7 +7,7 @@ import readline from "node:readline";
 import { fileURLToPath } from "node:url";
 import { compactImage } from "./portable-image.mjs";
 
-const SERVER_VERSION = "0.1.0";
+const SERVER_VERSION = "0.1.1";
 const RESOURCE_URI = "ui://svt-jewelry/followup-questions/v4.html";
 const COMPARISON_RESOURCE_URI = "ui://svt-jewelry/retouch-comparison/v10.html";
 const REMIX_BRIEF_RESOURCE_URI = "ui://svt-jewelry/remix-brief/v7.html";

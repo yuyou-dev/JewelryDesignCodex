@@ -24,7 +24,7 @@ test("core plugin has stable public release metadata and a local MCP", () => {
   const manifest = JSON.parse(read("plugins/svt-jewelry-design/.codex-plugin/plugin.json"));
   const mcp = JSON.parse(read("plugins/svt-jewelry-design/.mcp.json"));
   assert.equal(manifest.name, "svt-jewelry-design");
-  assert.equal(manifest.version, "0.1.0");
+  assert.equal(manifest.version, "0.1.1");
   assert.equal(manifest.license, "Apache-2.0");
   assert.equal(manifest.repository, "https://github.com/yuyou-dev/JewelryDesignCodex");
   assert.ok(mcp.mcpServers.svt_jewelry_ui);

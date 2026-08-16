@@ -8,6 +8,13 @@ All notable changes to JewelryDesignCodex are documented here. The project follo
 
 - Public release preparation, portability verification, and documentation hardening.
 
+## [0.1.1] - 2026-08-16
+
+### Fixed
+
+- Recover gpt-image-2 outputs deterministically from the worker `thread_id` emitted by Codex JSON events.
+- Normalize Windows prompt evidence, event-hook commands, paths, and cross-drive release tests.
+
 ## [0.1.0] - 2026-08-16
 
 ### Added
@@ -20,5 +27,6 @@ All notable changes to JewelryDesignCodex are documented here. The project follo
 - macOS and native Windows support for the core install.
 - Apache-2.0 source license with a separate SVT trademark policy.
 
-[Unreleased]: https://github.com/yuyou-dev/JewelryDesignCodex/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/yuyou-dev/JewelryDesignCodex/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/yuyou-dev/JewelryDesignCodex/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/yuyou-dev/JewelryDesignCodex/releases/tag/v0.1.0

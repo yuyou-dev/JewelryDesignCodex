@@ -17,7 +17,7 @@ from its installed cache without a sibling source repository.
 4. Preserve macOS and native Windows behavior. Do not add a POSIX-only launcher, `sips`, ImageMagick,
    or an implicit npm/pip install to the core runtime.
 5. Breaking MCP Apps UI changes require a new versioned `ui://` resource URI.
-6. Keep `v0.1.0` release metadata aligned across the root package, marketplace, and plugin manifests.
+6. Keep `v0.1.1` release metadata aligned across the root package, marketplace, and plugin manifests.
 
 ## Documentation routing
 

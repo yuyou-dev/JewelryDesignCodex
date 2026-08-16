@@ -74,7 +74,7 @@ if (args.includes("plugin marketplace list")) {
   process.stdout.write(JSON.stringify({marketplaces:[{name:"jewelry-design-codex",marketplaceSource:{sourceType:"git",source}}]}));
 } else if (args.includes("plugin list")) {
   const installed = ["installed", "disabled"].includes(mode)
-    ? [{pluginId:"svt-jewelry-design@jewelry-design-codex",name:"svt-jewelry-design",marketplaceName:"jewelry-design-codex",version:"0.1.0",installed:true,enabled:mode !== "disabled"}]
+    ? [{pluginId:"svt-jewelry-design@jewelry-design-codex",name:"svt-jewelry-design",marketplaceName:"jewelry-design-codex",version:"0.1.1",installed:true,enabled:mode !== "disabled"}]
     : [];
   process.stdout.write(JSON.stringify({installed,available:[]}));
 } else if (args.includes("mcp get")) {
@@ -97,7 +97,7 @@ if (args.includes("plugin marketplace list")) {
 function statefulFakeCodex(directory) {
   const implementation = join(directory, "stateful-codex.mjs");
   const statePath = join(directory, "state.json");
-  writeFileSync(statePath, JSON.stringify({ marketplace: false, installed: false, version: "0.1.0", available: "0.1.0" }));
+  writeFileSync(statePath, JSON.stringify({ marketplace: false, installed: false, version: "0.1.1", available: "0.1.1" }));
   writeFileSync(implementation, `
 import { readFileSync, writeFileSync } from "node:fs";
 const statePath = ${JSON.stringify(statePath)};
@@ -159,7 +159,7 @@ test("MCP stdio server starts from a path with spaces and non-ASCII characters",
   const result = runNode([MCP_SERVER, "--stdio"], { input: `${request}\n` });
   assert.equal(result.status, 0, result.stderr);
   const response = JSON.parse(result.stdout.trim());
-  assert.deepEqual(response.result.serverInfo, { name: "svt_jewelry_ui", version: "0.1.0" });
+  assert.deepEqual(response.result.serverInfo, { name: "svt_jewelry_ui", version: "0.1.1" });
 });
 
 test("MCP compacts oversized PNG previews with bundled cross-platform code", () => {

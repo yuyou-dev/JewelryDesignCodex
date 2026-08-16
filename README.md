@@ -74,7 +74,7 @@ Codex 会先检查环境和权限，再安装 `jewelry-design-codex` marketplace
 | Apps UI 与本地 MCP | 支持 | 支持 | 未验收 | 不支持 |
 | gpt-image-2 生成 | 支持 | 支持 | 未验收 | 不支持 |
 
-当前稳定版：`v0.1.0`。升级、卸载和状态修复见 [INSTALL.md](INSTALL.md#maintenance)与 [Troubleshooting](docs/TROUBLESHOOTING.md)。
+当前稳定版：`v0.1.1`。升级、卸载和状态修复见 [INSTALL.md](INSTALL.md#maintenance)与 [Troubleshooting](docs/TROUBLESHOOTING.md)。
 
 ## 默认插件与可选扩展
 

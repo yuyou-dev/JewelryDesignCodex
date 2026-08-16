@@ -72,7 +72,7 @@ UI readiness and provider readiness are separate. Check the user's Codex login a
 
 ## Update did not change the version
 
-`codex plugin marketplace upgrade jewelry-design-codex --json` refreshes the configured Git ref. A marketplace pinned to `v0.1.0` stays on that release. Moving to a newer tag requires an intentional source-ref change through Codex marketplace commands, followed by doctor, full restart, and a new task.
+`codex plugin marketplace upgrade jewelry-design-codex --json` refreshes the configured Git ref. A marketplace pinned to `v0.1.1` stays on that release. Moving to a newer tag requires an intentional source-ref change through Codex marketplace commands, followed by doctor, full restart, and a new task.
 
 ## Clean uninstall
 

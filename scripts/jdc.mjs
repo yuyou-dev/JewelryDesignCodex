@@ -8,7 +8,7 @@ import { resolveCodex, resolveExecutable, resolvePython } from "../plugins/svt-j
 
 const MARKETPLACE = "jewelry-design-codex";
 const MARKETPLACE_SOURCE = "yuyou-dev/JewelryDesignCodex";
-const MARKETPLACE_REF = "v0.1.0";
+const MARKETPLACE_REF = "v0.1.1";
 const PLUGIN = "svt-jewelry-design";
 const PLUGIN_ID = `${PLUGIN}@${MARKETPLACE}`;
 const MCP = "svt_jewelry_ui";

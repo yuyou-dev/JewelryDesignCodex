@@ -119,7 +119,7 @@ Interpret the JSON rather than matching human-formatted output.
 When the official marketplace is absent, run:
 
 ```text
-codex plugin marketplace add yuyou-dev/JewelryDesignCodex --ref v0.1.0 --json
+codex plugin marketplace add yuyou-dev/JewelryDesignCodex --ref v0.1.1 --json
 ```
 
 Then rerun `codex plugin marketplace list --json`. Continue only when one entry has:
@@ -212,7 +212,7 @@ The lifecycle update refreshes marketplace `jewelry-design-codex` and asks Codex
 packaged plugin only when one is available. It never removes the working plugin first, so a failed
 refresh leaves the previous version installed. User workspaces stay intact.
 
-The v0.1.0 marketplace is deliberately pinned to `v0.1.0`; `update` refreshes that release and does
+The v0.1.1 marketplace is deliberately pinned to `v0.1.1`; `update` refreshes that release and does
 not silently move across release tags. To move to a later release, read that release's `INSTALL.md`,
 show the old and new refs, obtain approval, and use Codex CLI marketplace commands to replace the
 source ref. Do not infer or automatically follow the newest tag. After any successful version

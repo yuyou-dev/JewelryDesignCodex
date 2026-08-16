@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import json
 import os
 import re
 import shutil
@@ -64,6 +65,7 @@ def codex_generate_command(
         "-a",
         "never",
         "exec",
+        "--json",
         "-C",
         str(workspace),
         "--skip-git-repo-check",
@@ -94,6 +96,22 @@ def image_paths_from_text(text: str, workspace: Path) -> list[Path]:
         if path.exists() and path.is_file() and path.suffix.lower() in IMAGE_SUFFIXES:
             paths[str(path.resolve())] = path
     return sorted(paths.values(), key=lambda path: path.stat().st_mtime, reverse=True)
+
+
+def thread_ids_from_event_stream(text: str) -> list[str]:
+    thread_ids: list[str] = []
+    for raw_line in str(text or "").splitlines():
+        line = raw_line.strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        thread_id = str(event.get("thread_id") or "") if isinstance(event, dict) and event.get("type") == "thread.started" else ""
+        if re.fullmatch(r"[A-Za-z0-9-]{8,80}", thread_id) and thread_id not in thread_ids:
+            thread_ids.append(thread_id)
+    return thread_ids
 
 
 def generated_images_after(root: Path, timestamp: float) -> list[Path]:
@@ -404,6 +422,16 @@ def recover_generated_image(
             if not candidate.is_file() or candidate.suffix.lower() not in IMAGE_SUFFIXES:
                 continue
             if str(candidate) not in text and candidate.as_posix() not in text:
+                continue
+            if not looks_like_image_file(candidate) or file_hash(candidate) in hashes:
+                continue
+            candidates[str(candidate.resolve())] = candidate
+    for thread_id in thread_ids_from_event_stream(text):
+        thread_root = generated_root / thread_id
+        if not thread_root.is_dir():
+            continue
+        for candidate in thread_root.rglob("*"):
+            if not candidate.is_file() or candidate.suffix.lower() not in IMAGE_SUFFIXES:
                 continue
             if not looks_like_image_file(candidate) or file_hash(candidate) in hashes:
                 continue

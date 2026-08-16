@@ -202,7 +202,7 @@ test("answers initialize with the svt_jewelry_ui identity and capabilities", asy
   assert.equal(response.jsonrpc, "2.0");
   assert.equal(response.id, 1);
   assert.deepEqual(response.result.serverInfo, { name: "svt_jewelry_ui", version: SERVER_VERSION });
-  assert.equal(SERVER_VERSION, "0.1.0");
+  assert.equal(SERVER_VERSION, "0.1.1");
   assert.deepEqual(response.result.capabilities, { tools: {}, resources: {} });
   assert.equal(response.result.protocolVersion, "2025-06-18");
   assert.match(response.result.instructions, /ask_jewelry_followup_questions/);

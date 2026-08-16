@@ -135,6 +135,34 @@ class JewelryImage2ToolTests(unittest.TestCase):
         self.assertEqual(recovered, str(generated))
         self.assertEqual(output.read_bytes(), TOOL.TINY_PNG_BYTES)
 
+    def test_recovery_uses_worker_thread_event_without_guessing_other_images(self) -> None:
+        worker = Path(self.tmp.name) / "codex-home"
+        selected = worker / "generated_images" / "thread-selected" / "selected.png"
+        unrelated = worker / "generated_images" / "thread-other" / "other.png"
+        selected.parent.mkdir(parents=True)
+        unrelated.parent.mkdir(parents=True)
+        selected.write_bytes(TOOL.TINY_PNG_BYTES + b"selected")
+        unrelated.write_bytes(TOOL.TINY_PNG_BYTES + b"unrelated")
+        output = self.workspace / "outputs" / "result.png"
+        stdout = '\n'.join([
+            json.dumps({"type": "thread.started", "thread_id": "thread-selected"}),
+            json.dumps({"type": "item.completed", "item": {"type": "agent_message", "text": ""}}),
+        ])
+
+        recovered = TOOL.recover_generated_image(
+            self.workspace,
+            output,
+            subprocess.CompletedProcess(["fake"], 0, stdout, ""),
+            self.workspace / "missing-message",
+            worker,
+            0,
+            False,
+            set(),
+        )
+
+        self.assertEqual(recovered, str(selected))
+        self.assertEqual(output.read_bytes(), selected.read_bytes())
+
 
     def test_preview_gallery_only_lists_existing_workspace_images(self) -> None:
         self.run_tool("init", "--workspace", str(self.workspace))
