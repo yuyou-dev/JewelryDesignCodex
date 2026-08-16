@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, readFile, realpath, rm, symlink, writeFile } from "node:fs/promises";
+import { realpathSync } from "node:fs";
+import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -826,7 +827,7 @@ test("opens the local editor for sketch and source-driven modes", async (t) => {
   assert.equal(blankBench.title, "随手画转珠宝");
   assert.equal(blankBench.customCategory, "发簪");
   assert.equal(blankBench.source, undefined);
-  assert.equal(blankBench.workspacePath, await realpath(workspace), "workspacePath must be canonicalized");
+  assert.equal(blankBench.workspacePath, realpathSync(workspace), "workspacePath must be canonicalized");
   assert.deepEqual(blankBench.referenceImages, []);
   assert.equal(blankBench.defaults.ratio, "1:1");
   assert.match(blank.content[0].text, /空白画板：未提供源图/);
@@ -843,7 +844,7 @@ test("opens the local editor for sketch and source-driven modes", async (t) => {
   const bench = edit.structuredContent.visualWorkbench;
   assert.equal(bench.mode, "local_edit");
   assert.equal(bench.title, "珠宝局部重绘");
-  assert.equal(bench.source.path, await realpath(source), "workspace images must be canonicalized");
+  assert.equal(bench.source.path, realpathSync(source), "workspace images must be canonicalized");
   assert.equal(bench.source.mimeType, "image/png");
   assert.equal(bench.referenceImages.length, 1);
   assert.equal(bench.referenceImages[0].role, "material");
@@ -895,8 +896,8 @@ test("opens the tryon editor with clamped placement defaults", async (t) => {
   assert.equal(bench.workflow, "tryon");
   assert.equal(bench.title, "珠宝模特佩戴");
   assert.equal(bench.category, "necklace");
-  assert.equal(bench.jewelry.path, await realpath(jewelry));
-  assert.equal(bench.model.path, await realpath(model));
+  assert.equal(bench.jewelry.path, realpathSync(jewelry));
+  assert.equal(bench.model.path, realpathSync(model));
   assert.deepEqual(bench.defaults, { instruction: "戴在锁骨", pair: true, ratio: "3:4", x: 1, y: 0, scale: 0.02, rotation: 180 });
   assert.match(result.content[0].text, /珠宝: /);
   assert.match(result.content[0].text, /模特: /);

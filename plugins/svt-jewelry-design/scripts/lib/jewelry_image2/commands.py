@@ -239,7 +239,7 @@ def command_generate(args: argparse.Namespace) -> int:
         print(json.dumps({"status": "noop", "message": "no matching jobs"}, ensure_ascii=False))
         return 0
     has_external_route = any(image2_provider_route_issues(job) for job in jobs)
-    request_readiness = validate_request_readiness(
+    request_readiness = _runtime.resolve("validate_request_readiness", validate_request_readiness)(
         requested_count=len(jobs),
         output_shape="independent_images",
         outputs=[str(job.get("output") or f"outputs/{safe_id(str(job.get('id') or 'job'))}.png") for job in jobs],

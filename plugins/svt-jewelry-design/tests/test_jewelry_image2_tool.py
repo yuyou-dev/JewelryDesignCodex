@@ -27,8 +27,21 @@ class JewelryImage2ToolTests(unittest.TestCase):
     def setUp(self) -> None:
         self.tmp = tempfile.TemporaryDirectory()
         self.workspace = Path(self.tmp.name) / "run"
+        original_validate = TOOL.validate_request_readiness
+
+        def validate_without_live_provider(**kwargs):
+            kwargs["check_provider"] = False
+            return original_validate(**kwargs)
+
+        self.provider_readiness = mock.patch.object(
+            TOOL,
+            "validate_request_readiness",
+            side_effect=validate_without_live_provider,
+        )
+        self.provider_readiness.start()
 
     def tearDown(self) -> None:
+        self.provider_readiness.stop()
         self.tmp.cleanup()
 
     def run_tool(self, *args: str) -> int:

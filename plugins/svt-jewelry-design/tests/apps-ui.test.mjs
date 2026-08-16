@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import { randomBytes } from "node:crypto";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
-import { mkdir, mkdtemp, readFile, realpath, rm, symlink, writeFile } from "node:fs/promises";
+import { realpathSync } from "node:fs";
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -1126,7 +1127,7 @@ test("renders both visual workflows and saves only workspace-local draft assets"
     }));
     assert.equal(local.result.isError, undefined);
     assert.equal(local.result.structuredContent.visualWorkbench.workflow, "local_edit");
-    assert.equal(local.result.structuredContent.visualWorkbench.source.path, await realpath(sourcePath));
+    assert.equal(local.result.structuredContent.visualWorkbench.source.path, realpathSync(sourcePath));
     assert.equal(JSON.stringify(local.result.structuredContent).includes("base64"), false);
     assert.match(local.result._meta.visualWorkbenchMedia.source, /^data:image\/png;base64,/);
     assert.match(local.result._meta.visualWorkbenchMedia.stone, /^data:image\/png;base64,/);
