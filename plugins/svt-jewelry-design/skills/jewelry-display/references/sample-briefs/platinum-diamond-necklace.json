@@ -1,0 +1,26 @@
+{
+  "product_name": "Platinum diamond swallow pendant necklace",
+  "category": "necklace",
+  "materials": [
+    "mirror-polished platinum",
+    "white diamonds"
+  ],
+  "gemstones": [
+    "round brilliant white diamonds",
+    "small blue sapphire accent eyes"
+  ],
+  "construction": "fine platinum chain connected to a sculptural swallow pendant, pave-set diamond wings, visible bail and continuous chain links",
+  "design": "light high-jewelry pendant with flying swallow silhouette, diamond sparkle, and delicate platinum chain continuity",
+  "product_truth": "chain links must remain continuous, pendant bail must visibly connect to the chain, diamond wings must be sharp and not merged into fabric",
+  "scale": "delicate necklace scale, pendant small but readable against the support textile",
+  "constraints": [
+    "pendant face must remain clear",
+    "chain must not break or disappear inside fabric",
+    "diamonds must stay crisp"
+  ],
+  "forbidden": [
+    "fabric covering the pendant",
+    "broken chain",
+    "extra necklace layers"
+  ]
+}

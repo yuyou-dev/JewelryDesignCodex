@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>珠宝精修对比</title>
+    <style>
+      :root { color-scheme: light dark; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; --fg:#191919; --muted:#707070; --line:rgba(127,127,127,.24); --surface:rgba(127,127,127,.08); --accent:#a77d2d; }
+      * { box-sizing:border-box; }
+      html,body { margin:0; overflow-x:hidden; overflow-y:hidden; overscroll-behavior:none; background:transparent; color:var(--fg); }
+      body { padding:6px 8px 8px; }
+      main { width:100%; min-width:0; }
+      .heading { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin:0 0 8px; }
+      h1 { margin:0; font-size:17px; line-height:1.3; font-weight:650; }
+      .caption { margin:3px 0 0; color:var(--muted); font-size:13px; line-height:1.4; max-width:64ch; }
+      .counter { color:var(--muted); font-size:12px; white-space:nowrap; padding-top:3px; }
+      .comparison-grid { position:relative; display:grid; grid-template-columns:70px minmax(0,650px) minmax(180px,200px); gap:12px; width:100%; max-width:944px; height:clamp(400px,50vw,560px); min-height:0; }
+      .comparison-grid.dense { grid-template-columns:124px minmax(0,650px) minmax(180px,200px); max-width:998px; }
+      .comparison-grid.single { grid-template-columns:minmax(0,650px) minmax(180px,200px); max-width:862px; }
+      .pair-rail { display:grid; grid-auto-rows:68px; align-content:start; gap:8px; min-height:0; }
+      .pair-rail.dense { grid-template-columns:repeat(2,58px); grid-auto-rows:58px; }
+      .pair-button { position:relative; width:68px; height:68px; min-width:44px; min-height:44px; aspect-ratio:1; padding:0; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--surface); cursor:pointer; color:inherit; }
+      .pair-button img { width:100%; height:100%; object-fit:cover; display:block; }
+      .pair-rail.dense .pair-button { width:58px; height:58px; }
+      .pair-button span { position:absolute; left:4px; bottom:4px; min-width:20px; padding:2px 5px; border-radius:5px; background:rgba(15,15,15,.72); color:white; font-size:10px; line-height:1; }
+      .pair-button[aria-current="true"] { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 25%,transparent); }
+      .pair-button:focus-visible,.range:focus-visible,.retry:focus-visible { outline:3px solid color-mix(in srgb,var(--accent) 55%,transparent); outline-offset:2px; }
+      .stage { position:relative; min-width:0; min-height:0; overflow:hidden; border-radius:12px; background:var(--surface); touch-action:pan-y; }
+      .stage img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; display:block; user-select:none; pointer-events:none; }
+      .after { clip-path:inset(0 0 0 var(--position)); }
+      .divider { position:absolute; top:0; bottom:0; left:var(--position); width:2px; transform:translateX(-1px); background:white; box-shadow:0 0 0 1px rgba(0,0,0,.24); pointer-events:none; }
+      .handle { position:absolute; top:50%; left:var(--position); width:34px; height:34px; transform:translate(-50%,-50%); border-radius:50%; background:white; color:#202020; display:grid; place-items:center; box-shadow:0 2px 12px rgba(0,0,0,.24); font-size:15px; pointer-events:none; }
+      .tag { position:absolute; top:10px; z-index:2; padding:5px 8px; border-radius:7px; background:rgba(15,15,15,.68); color:white; font-size:12px; backdrop-filter:blur(8px); }
+      .tag.before { left:8px; } .tag.after-label { right:8px; }
+      .range { position:absolute; inset:0; z-index:5; width:100%; height:100%; opacity:0; cursor:ew-resize; touch-action:pan-y; }
+      .details { min-width:0; display:flex; flex-direction:column; gap:9px; padding:8px 2px 4px; }
+      .eyebrow { margin:0; color:var(--accent); font-size:12px; font-weight:700; letter-spacing:.08em; }
+      .details h2 { margin:0; font-size:17px; line-height:1.3; }
+      .details p { margin:0; color:var(--muted); font-size:13px; line-height:1.5; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+      .hint { padding-top:6px; border-top:1px solid var(--line); }
+      .actions { margin-top:auto; }
+      .select { width:100%; min-height:44px; padding:10px 14px; border:0; border-radius:999px; background:#171717; color:#fff; font:inherit; font-size:13px; font-weight:720; cursor:pointer; }
+      .select:disabled { opacity:.55; cursor:default; }
+      .status { min-height:16px; margin:6px 0 0!important; color:var(--muted); font-size:11px!important; line-height:1.35!important; text-align:center; }
+      .loading,.error { min-height:340px; display:grid; place-items:center; text-align:center; color:var(--muted); }
+      .loading picture,.loading img { width:64px; height:64px; display:block; margin:auto; }
+      .loading p,.error p { margin:8px 0 0; font-size:13px; }
+      .retry { margin-top:10px; min-height:40px; padding:8px 14px; border:1px solid #171717; border-radius:999px; background:#171717; color:#fff; }
+      [hidden] { display:none !important; }
+      @media (max-width:620px) {
+        body { padding:4px; }
+        .comparison-grid { grid-template-columns:62px minmax(0,1fr); height:clamp(440px,108vw,500px); gap:8px; }
+        .comparison-grid.dense { grid-template-columns:112px minmax(0,1fr); }
+        .comparison-grid.single { grid-template-columns:minmax(0,1fr); }
+        .pair-rail { grid-auto-rows:60px; gap:7px; }
+        .pair-rail.dense { grid-template-columns:repeat(2,52px); grid-auto-rows:52px; }
+        .pair-button { width:60px; height:60px; }
+        .pair-rail.dense .pair-button { width:52px; height:52px; }
+        .details { position:absolute; left:70px; right:10px; bottom:10px; z-index:7; max-height:150px; padding:10px; border-radius:10px; background:color-mix(in srgb,Canvas 88%,transparent); backdrop-filter:blur(10px); }
+        .comparison-grid.dense .details { left:120px; }
+        .comparison-grid.single .details { left:10px; }
+        .details .hint,.details .eyebrow { display:none; }
+        .details h2 { font-size:14px; } .details p { font-size:12px; -webkit-line-clamp:1; }
+        .select { min-height:40px; padding-block:8px; font-size:12px; }
+      }
+      @media (prefers-color-scheme:dark) { :root { --fg:#f3f3f3; --muted:#aaa; --accent:#d2ad64; } }
+      @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; animation:none !important; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section id="loading" class="loading" aria-live="polite">
+        <div>
+          <picture>
+            <source media="(prefers-reduced-motion: reduce)" srcset="{{BRAND_STATIC_DATA_URI}}" />
+            <img src="{{BRAND_LOADING_DATA_URI}}" alt="" />
+          </picture>
+          <p>{{BRAND_NAME}} · 正在加载精修图片…</p>
+        </div>
+      </section>
+      <section id="error" class="error" role="status" hidden><div><strong>无法显示精修对比</strong><p id="error-text"></p></div></section>
+      <section id="content" hidden>
+        <div class="heading"><div><h1 id="title"></h1><p id="caption" class="caption"></p></div><span id="counter" class="counter"></span></div>
+        <div class="comparison-grid">
+          <nav id="pair-rail" class="pair-rail" aria-label="精修图片"></nav>
+          <div id="stage" class="stage" style="--position:50%">
+            <img id="before-image" alt="精修前" />
+            <img id="after-image" class="after" alt="精修后" />
+            <span id="before-label" class="tag before"></span><span id="after-label" class="tag after-label"></span>
+            <div class="divider"></div><div class="handle" aria-hidden="true">↔</div>
+            <input id="slider" class="range" type="range" min="0" max="100" value="50" aria-label="拖动比较精修前后" />
+          </div>
+          <aside class="details"><p id="pair-id" class="eyebrow"></p><h2 id="pair-title"></h2><p id="pair-caption"></p><p class="hint">拖动图片查看前后差异；切换左侧缩略图浏览其他精修。</p><div class="actions"><button id="select" class="select" type="button">选定精修图继续</button><p id="status" class="status" aria-live="polite"></p></div></aside>
+        </div>
+      </section>
+    </main>
+    <script>
+      (() => {
+        const APP_PROTOCOL="2026-01-26"; let requestId=0,connected=false,hostCanMessage=false,hostCanUpdateContext=false; const pending=new Map(); let active=null; let currentId="";
+        setTimeout(()=>{if(!document.querySelector("#loading").hidden)showError("等待精修对比超时，请在对话中重试。")},15000);
+        const notify=(method,params={})=>window.parent.postMessage({jsonrpc:"2.0",method,params},"*");
+        const request=(method,params={},timeout=5000)=>new Promise((resolve,reject)=>{const id=++requestId;const timer=setTimeout(()=>{pending.delete(id);reject(new Error("host timeout"));},timeout);pending.set(id,{resolve,reject,timer});window.parent.postMessage({jsonrpc:"2.0",id,method,params},"*");});
+        window.addEventListener("message",event=>{if(event.source!==window.parent)return;const message=event.data;if(!message||message.jsonrpc!=="2.0")return;if(message.id&&pending.has(message.id)){const item=pending.get(message.id);pending.delete(message.id);clearTimeout(item.timer);message.error?item.reject(new Error(message.error.message)):item.resolve(message.result);}if(message.method==="ui/notifications/tool-input")accept(message.params?.arguments??message.params);if(message.method==="ui/notifications/tool-result")accept(message.params,true);});
+        function parse(value,depth=0){if(depth>2||value==null)return value;if(typeof value==="string"){try{return parse(JSON.parse(value),depth+1);}catch{return value;}}if(typeof value!=="object")return value;if(value.isError){const text=value.content?.find(item=>item?.type==="text")?.text;return{error:text||"工具未能准备精修对比。"};}if(value.structuredContent?.comparison)return{comparison:value.structuredContent.comparison,media:value._meta?.comparisonMedia};if(value.comparison)return{comparison:value.comparison,media:value.media??value.comparisonMedia??value._meta?.comparisonMedia};if(value.result)return parse(value.result,depth+1);const text=value.content?.length===1&&value.content[0]?.type==="text"?value.content[0].text:null;if(text){const candidate=parse(text,depth+1);if(candidate!==text)return candidate;}return value;}
+        function normalized(payload){const comparison=payload?.comparison;const media=payload?.media;if(!comparison||!media)return null;const rawPairs=Array.isArray(comparison.pairs)&&comparison.pairs.length?comparison.pairs:[{id:"RETOUCH-A",title:comparison.title,caption:comparison.caption,before:comparison.before,after:comparison.after}];const mediaPairs=media.pairs??{[rawPairs[0].id||"RETOUCH-A"]:{before:media.before,after:media.after}};const pairs=rawPairs.map((pair,index)=>({...pair,id:pair.id||`RETOUCH-${"ABCDEFGH"[index]}`,media:mediaPairs[pair.id||`RETOUCH-${"ABCDEFGH"[index]}`]})).filter(pair=>pair.before&&pair.after&&pair.media?.before&&pair.media?.after);return pairs.length===rawPairs.length?{...comparison,pairs}:null;}
+        function showError(message){document.querySelector("#loading").hidden=true;document.querySelector("#content").hidden=true;document.querySelector("#error").hidden=false;document.querySelector("#error-text").textContent=message||"未收到可展示的精修结果。";sendSize();}
+        function accept(value,isResult=false){const payload=parse(value);if(payload?.error){showError(payload.error);return;}const data=normalized(payload);if(!data){if(isResult)showError("未收到完整的精修图片与预览数据。");return;}active=data;currentId=data.pairs.some(pair=>pair.id===data.initialPairId)?data.initialPairId:data.pairs[0].id;render();}
+        function render(){document.querySelector("#loading").hidden=true;document.querySelector("#error").hidden=true;document.querySelector("#content").hidden=false;document.querySelector("#title").textContent=active.title||"珠宝精修前后对比";const caption=document.querySelector("#caption");caption.textContent=active.caption||"";caption.hidden=!caption.textContent;const rail=document.querySelector("#pair-rail"),grid=document.querySelector(".comparison-grid"),single=active.pairs.length===1,dense=active.pairs.length>5;grid.classList.toggle("single",single);grid.classList.toggle("dense",dense);rail.classList.toggle("dense",dense);rail.style.setProperty("--pair-count",active.pairs.length);rail.replaceChildren(...active.pairs.map((pair,index)=>{const button=document.createElement("button");button.type="button";button.className="pair-button";button.dataset.id=pair.id;button.setAttribute("aria-label",pair.title||pair.id);button.setAttribute("aria-current",String(pair.id===currentId));const image=document.createElement("img");image.src=pair.media.after;image.alt="";const badge=document.createElement("span");badge.textContent=String(index+1).padStart(2,"0");button.append(image,badge);button.addEventListener("click",()=>{currentId=pair.id;renderActive();});return button;}));rail.hidden=single;renderActive();sendSize();}
+        function renderActive(){const index=active.pairs.findIndex(pair=>pair.id===currentId);const pair=active.pairs[index];document.querySelectorAll(".pair-button").forEach(button=>button.setAttribute("aria-current",String(button.dataset.id===currentId)));document.querySelector("#counter").textContent=`${index+1} / ${active.pairs.length}`;document.querySelector("#pair-id").textContent=pair.id;document.querySelector("#pair-title").textContent=pair.title||pair.id;const detail=document.querySelector("#pair-caption");detail.textContent=pair.caption||"产品结构保持不变，仅呈现精修前后差异。";document.querySelector("#before-image").src=pair.media.before;document.querySelector("#after-image").src=pair.media.after;document.querySelector("#before-image").alt=pair.before.label||"精修前";document.querySelector("#after-image").alt=pair.after.label||"精修后";document.querySelector("#before-label").textContent=pair.before.label||"精修前";document.querySelector("#after-label").textContent=pair.after.label||"精修后";const slider=document.querySelector("#slider");slider.value=String(active.initialPosition??50);setPosition(slider.value);sendSize();}
+        function setPosition(value){document.querySelector("#stage").style.setProperty("--position",`${value}%`);}document.querySelector("#slider").addEventListener("input",event=>setPosition(event.target.value));
+        async function sendMessage(text){if(connected&&hostCanMessage){try{await request("ui/message",{role:"user",content:[{type:"text",text}]},8000);return}catch{}}if(window.openai?.sendFollowUpMessage){await window.openai.sendFollowUpMessage({prompt:text,scrollToBottom:false});return}throw new Error("当前宿主不支持选择回写")}
+        function selectionText(context){return `已选中珠宝视觉资产 ${context.assetId}。等待用户下一条任务指令；不要预设精修、二创、海报、画册、展示、视频或其他工作流。\n\nCurrent jewelry asset selection (JSON):\n${JSON.stringify(context)}`}
+        async function recordSelection(context){const text=selectionText(context);if(connected&&hostCanUpdateContext){try{await request("ui/update-model-context",{content:[{type:"text",text}],structuredContent:{jewelryAssetSelection:context}},8000);return"context"}catch{}}await sendMessage(text);return"message"}
+        document.querySelector("#select").addEventListener("click",async event=>{const button=event.currentTarget,status=document.querySelector("#status"),context={assetId:currentId,sourceWorkflow:"retouch",assetRole:"after"};button.disabled=true;button.textContent="正在记录…";try{const mode=await recordSelection(context);button.textContent="已选中";status.textContent=mode==="context"?"已选中，请在输入框说明下一步。":"已回写对话，请继续说明下一步。"}catch(error){button.disabled=false;button.textContent="选定精修图继续";status.textContent=error.message}sendSize()});
+        window.addEventListener("keydown",event=>{if(event.target===document.querySelector("#slider")||!active||active.pairs.length<2)return;if(!["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(event.key))return;event.preventDefault();const index=active.pairs.findIndex(pair=>pair.id===currentId);const next=(index+(event.key==="ArrowUp"||event.key==="ArrowLeft"?-1:1)+active.pairs.length)%active.pairs.length;currentId=active.pairs[next].id;renderActive();});
+        function sendSize(){notify("ui/notifications/size-changed",{width:Math.ceil(window.innerWidth),height:Math.ceil(document.querySelector("main").getBoundingClientRect().height)});}new ResizeObserver(sendSize).observe(document.querySelector("main"));
+        async function connect(){try{const result=await request("ui/initialize",{protocolVersion:APP_PROTOCOL,appInfo:{name:"suwa-jewelry-retouch",version:"1.1.0"},appCapabilities:{availableDisplayModes:["inline"]}});connected=true;hostCanMessage=Boolean(result?.hostCapabilities?.message?.text);hostCanUpdateContext=Boolean(result?.hostCapabilities?.updateModelContext);notify("ui/notifications/initialized");}catch{accept(window.openai?.toolInput);accept(window.openai?.toolOutput,true);}}
+        accept(window.openai?.toolInput);accept(window.openai?.toolOutput,true);connect();
+      })();
+    </script>
+  </body>
+</html>

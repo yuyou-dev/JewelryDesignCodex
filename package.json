@@ -1,0 +1,16 @@
+{
+  "name": "jewelry-design-codex-marketplace",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node scripts/run-tests.mjs",
+    "test:release": "node --test tests/*.test.mjs",
+    "scan:public": "node scripts/public-scan.mjs",
+    "doctor": "node scripts/jdc.mjs doctor",
+    "doctor:json": "node scripts/jdc.mjs doctor --json"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

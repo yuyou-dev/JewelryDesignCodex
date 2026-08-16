@@ -1,0 +1,6 @@
+interface:
+  display_name: "Jewelry Feishu Agent"
+  short_description: "Tested Feishu document delivery workflows."
+  default_prompt: "Use $jewelry-feishu-agent to deliver this completed jewelry task through my separately installed and authorized lark-cli."
+policy:
+  allow_implicit_invocation: true

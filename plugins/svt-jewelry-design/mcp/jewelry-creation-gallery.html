@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>珠宝视觉成品</title>
+    <style>
+      :root { color-scheme:light dark; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; --fg:#191919; --muted:#707070; --line:rgba(127,127,127,.24); --surface:rgba(127,127,127,.07); --accent:#a77d2d; }
+      * { box-sizing:border-box; }
+      html,body { margin:0; overflow-x:hidden; overflow-y:hidden; overscroll-behavior:none; background:transparent; color:var(--fg); }
+      body { padding:6px 8px 8px; }
+      main { width:100%; min-width:0; }
+      header { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:8px; }
+      h1 { margin:0; font-size:17px; line-height:1.3; }
+      .caption { margin:3px 0 0; color:var(--muted); font-size:13px; line-height:1.4; max-width:64ch; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .counter { color:var(--muted); font-size:12px; white-space:nowrap; padding-top:3px; }
+      .gallery-grid { position:relative; display:grid; grid-template-columns:70px minmax(0,650px) minmax(180px,200px); gap:12px; width:100%; max-width:944px; height:clamp(400px,50vw,560px); min-height:0; }
+      .gallery-grid.dense { grid-template-columns:124px minmax(0,650px) minmax(180px,200px); max-width:998px; }
+      .gallery-grid.single { grid-template-columns:minmax(0,650px) minmax(180px,200px); max-width:862px; }
+      .asset-rail { display:grid; grid-auto-rows:68px; align-content:start; gap:8px; min-height:0; }
+      .asset-rail.dense { grid-template-columns:repeat(2,58px); grid-auto-rows:58px; }
+      .asset-button { position:relative; width:68px; height:68px; min-width:44px; min-height:44px; aspect-ratio:1; padding:0; overflow:hidden; border:1px solid var(--line); border-radius:10px; background:var(--surface); cursor:pointer; }
+      .asset-button img { width:100%; height:100%; display:block; object-fit:cover; }
+      .asset-rail.dense .asset-button { width:58px; height:58px; }
+      .asset-button span { position:absolute; left:4px; bottom:4px; padding:2px 5px; border-radius:4px; background:rgba(15,15,15,.7); color:white; font-size:10px; line-height:1; }
+      .asset-button[aria-current="true"] { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 25%,transparent); }
+      .asset-button:focus-visible,.select:focus-visible { outline:3px solid color-mix(in srgb,var(--accent) 50%,transparent); outline-offset:2px; }
+      .stage { position:relative; min-width:0; min-height:0; overflow:hidden; border-radius:12px; background:var(--surface); touch-action:pan-y; }
+      .stage img { width:100%; height:100%; display:block; object-fit:contain; }
+      .workflow-tag { position:absolute; top:10px; left:10px; padding:5px 8px; border-radius:7px; background:rgba(15,15,15,.68); color:white; font-size:12px; backdrop-filter:blur(8px); }
+      .details { min-width:0; display:flex; flex-direction:column; padding:8px 2px 4px; }
+      .asset-id { margin:0 0 7px; color:var(--accent); font-size:12px; font-weight:720; letter-spacing:.06em; overflow-wrap:anywhere; }
+      .details h2 { margin:0 0 7px; font-size:17px; line-height:1.3; }
+      .details p { margin:0; color:var(--muted); font-size:13px; line-height:1.5; }
+      .summary { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; overflow:hidden; }
+      .use { margin-top:9px!important; font-weight:650; }
+      .actions { margin-top:auto; }
+      .select { width:100%; min-height:44px; padding:10px 14px; border:0; border-radius:999px; background:#171717; color:#fff; font:inherit; font-size:13px; font-weight:720; cursor:pointer; }
+      .select:disabled { opacity:.55; cursor:default; }
+      .status { min-height:16px; margin:6px 0 0; color:var(--muted); font-size:11px; line-height:1.35; text-align:center; }
+      .loading,.error { min-height:340px; display:grid; place-items:center; color:var(--muted); font-size:13px; text-align:center; }
+      .loading picture,.loading img { display:block; width:64px; height:64px; margin:auto; }
+      .loading p,.error p { margin:6px 0 0; }
+      [hidden] { display:none!important; }
+      @media (max-width:620px) { body{padding-inline:4px}.gallery-grid{grid-template-columns:62px minmax(0,1fr);height:clamp(440px,108vw,500px);gap:8px}.gallery-grid.dense{grid-template-columns:112px minmax(0,1fr)}.gallery-grid.single{grid-template-columns:minmax(0,1fr)}.asset-rail{grid-auto-rows:60px;gap:7px}.asset-rail.dense{grid-template-columns:repeat(2,52px);grid-auto-rows:52px}.asset-button{width:60px;height:60px}.asset-rail.dense .asset-button{width:52px;height:52px}.details{position:absolute;right:8px;bottom:8px;width:min(220px,calc(100% - 80px));max-height:150px;padding:10px;border-radius:10px;background:color-mix(in srgb,Canvas 90%,transparent);box-shadow:0 4px 18px rgba(0,0,0,.12);backdrop-filter:blur(12px)}.gallery-grid.dense .details{width:min(220px,calc(100% - 130px))}.gallery-grid.single .details{width:min(220px,calc(100% - 16px))}.details h2{font-size:14px;margin-bottom:4px}.details p{font-size:12px}.summary{-webkit-line-clamp:1}.use{display:none}.select{min-height:40px;margin-top:6px;padding-block:8px;font-size:12px} }
+      @media (prefers-color-scheme:dark) { :root{--fg:#f3f3f3;--muted:#aaa;--accent:#d2ad64} }
+      @media (prefers-reduced-motion:reduce) { *,*::before,*::after{animation:none!important;transition:none!important} }
+    </style>
+  </head>
+  <body>
+    <main data-brand="{{BRAND_NAME}}">
+      <section id="loading" class="loading"><div><picture><source media="(prefers-reduced-motion: reduce)" srcset="{{BRAND_STATIC_DATA_URI}}" /><img src="{{BRAND_LOADING_DATA_URI}}" alt="" /></picture><p>{{BRAND_NAME}} · 正在加载视觉成品…</p></div></section>
+      <section id="error" class="error" role="status" hidden><div><strong>无法显示成品 Gallery</strong><p id="error-text"></p></div></section>
+      <section id="content" hidden>
+        <header><div><h1 id="title"></h1><p id="caption" class="caption"></p></div><span id="counter" class="counter"></span></header>
+        <div class="gallery-grid"><nav id="asset-rail" class="asset-rail" aria-label="视觉成品"></nav><div class="stage"><img id="asset-image" alt="珠宝视觉成品" /><span id="workflow-tag" class="workflow-tag"></span></div><aside class="details"><p id="asset-id" class="asset-id"></p><h2 id="asset-title"></h2><p id="summary" class="summary"></p><p id="use-case" class="use"></p><div class="actions"><button id="select" class="select" type="button">选定此图继续</button><p id="status" class="status" aria-live="polite"></p></div></aside></div>
+      </section>
+    </main>
+    <script>
+      (()=>{
+        const APP_PROTOCOL="2026-01-26",LABELS={poster:"珠宝海报",catalog:"珠宝画册",display:"珠宝展示",grid:"珠宝九宫格",grid_redraw:"九宫格拆分重绘",reference_sheet:"珠宝结构参考图",tryon:"珠宝模特佩戴"};let requestId=0,connected=false,hostCanMessage=false,hostCanUpdateContext=false,active=null,currentId="";const pending=new Map();
+        setTimeout(()=>{if(!document.querySelector("#loading").hidden)showError("等待视觉成品超时，请在对话中重试 Gallery。")},15000);
+        const notify=(method,params={})=>window.parent.postMessage({jsonrpc:"2.0",method,params},"*");const request=(method,params={},timeout=6000)=>new Promise((resolve,reject)=>{const id=++requestId,timer=setTimeout(()=>{pending.delete(id);reject(new Error("host timeout"));},timeout);pending.set(id,{resolve,reject,timer});window.parent.postMessage({jsonrpc:"2.0",id,method,params},"*");});
+        window.addEventListener("message",event=>{if(event.source!==window.parent)return;const message=event.data;if(!message||message.jsonrpc!=="2.0")return;if(message.id&&pending.has(message.id)){const item=pending.get(message.id);pending.delete(message.id);clearTimeout(item.timer);message.error?item.reject(new Error(message.error.message)):item.resolve(message.result)}if(message.method==="ui/notifications/tool-input")accept(message.params?.arguments??message.params);if(message.method==="ui/notifications/tool-result")accept(message.params,true)});
+        function parse(value,depth=0){if(depth>2||value==null)return value;if(typeof value==="string"){try{return parse(JSON.parse(value),depth+1)}catch{return value}}if(typeof value!=="object")return value;if(value.isError){const text=value.content?.find(item=>item?.type==="text")?.text;return{error:text||"工具未能准备视觉成品。"}}if(value.structuredContent?.creationGallery)return{gallery:value.structuredContent.creationGallery,media:value._meta?.creationMedia};if(value.creationGallery)return{gallery:value.creationGallery,media:value.media??value.creationMedia??value._meta?.creationMedia};if(value.result)return parse(value.result,depth+1);const text=value.content?.length===1&&value.content[0]?.type==="text"?value.content[0].text:null;if(text){const candidate=parse(text,depth+1);if(candidate!==text)return candidate}return value}
+        function showError(message){document.querySelector("#loading").hidden=true;document.querySelector("#content").hidden=true;document.querySelector("#error").hidden=false;document.querySelector("#error-text").textContent=message||"未收到可展示的媒体结果。";sendSize()}
+        function accept(value,isResult=false){const payload=parse(value);if(payload?.error){showError(payload.error);return}const gallery=payload?.gallery,media=payload?.media;if(!gallery||!Array.isArray(gallery.items)||gallery.items.length===0||!media?.items){if(isResult)showError("未收到完整的成品与预览数据。");return}const items=gallery.items.map(item=>({...item,preview:media.items[item.id]})).filter(item=>item.preview);if(items.length!==gallery.items.length){showError("部分成品缺少预览，已停止展示以避免漏图。");return}active={...gallery,items};currentId=items.some(item=>item.id===gallery.initialAssetId)?gallery.initialAssetId:items[0].id;render()}
+        function render(){document.querySelector("#loading").hidden=true;document.querySelector("#error").hidden=true;document.querySelector("#content").hidden=false;document.querySelector("#title").textContent=active.title||LABELS[active.workflow]||"珠宝视觉成品";const caption=document.querySelector("#caption");caption.textContent=active.caption||"";caption.hidden=!caption.textContent;document.querySelector("#workflow-tag").textContent=LABELS[active.workflow]||active.workflow;const rail=document.querySelector("#asset-rail"),grid=document.querySelector(".gallery-grid"),single=active.items.length===1,dense=active.items.length>5;grid.classList.toggle("single",single);grid.classList.toggle("dense",dense);rail.classList.toggle("dense",dense);rail.style.setProperty("--asset-count",active.items.length);rail.replaceChildren(...active.items.map((item,index)=>{const button=document.createElement("button"),image=document.createElement("img"),badge=document.createElement("span");button.type="button";button.className="asset-button";button.dataset.id=item.id;button.setAttribute("aria-label",item.title||item.id);button.setAttribute("aria-current",String(item.id===currentId));image.src=item.preview;image.alt="";badge.textContent=String(index+1).padStart(2,"0");button.append(image,badge);button.addEventListener("click",()=>{currentId=item.id;show()});return button}));rail.hidden=single;show();sendSize()}
+        function show(){const index=active.items.findIndex(item=>item.id===currentId),item=active.items[index];document.querySelectorAll(".asset-button").forEach(button=>button.setAttribute("aria-current",String(button.dataset.id===currentId)));document.querySelector("#counter").textContent=`${index+1} / ${active.items.length}`;const image=document.querySelector("#asset-image");image.src=item.preview;image.alt=item.title||"珠宝视觉成品";document.querySelector("#asset-id").textContent=item.id;document.querySelector("#asset-title").textContent=item.title||item.id;document.querySelector("#summary").textContent=item.summary||item.slot||"已完成的珠宝视觉成品。";document.querySelector("#use-case").textContent=item.useCase?`用途 · ${item.useCase}`:"";document.querySelector("#status").textContent="";sendSize()}
+        async function sendMessage(text){if(connected&&hostCanMessage){try{await request("ui/message",{role:"user",content:[{type:"text",text}]},8000);return}catch{}}if(window.openai?.sendFollowUpMessage){await window.openai.sendFollowUpMessage({prompt:text,scrollToBottom:false});return}throw new Error("当前宿主不支持选择回写")}
+        function selectionText(context){return `已选中珠宝视觉资产 ${context.assetId}。等待用户下一条任务指令；不要预设精修、二创、海报、画册、展示、视频或其他工作流。\n\nCurrent jewelry asset selection (JSON):\n${JSON.stringify(context)}`}
+        async function recordSelection(context){const text=selectionText(context);if(connected&&hostCanUpdateContext){try{await request("ui/update-model-context",{content:[{type:"text",text}],structuredContent:{jewelryAssetSelection:context}},8000);return"context"}catch{}}await sendMessage(text);return"message"}
+        document.querySelector("#select").addEventListener("click",async event=>{const button=event.currentTarget,status=document.querySelector("#status"),context={assetId:currentId,sourceWorkflow:active.workflow};button.disabled=true;button.textContent="正在记录…";try{const mode=await recordSelection(context);button.textContent="已选中";status.textContent=mode==="context"?"已选中，请在输入框说明下一步。":"已回写对话，请继续说明下一步。"}catch(error){button.disabled=false;button.textContent="选定此图继续";status.textContent=error.message}sendSize()});
+        window.addEventListener("keydown",event=>{if(!active||active.items.length<2||!["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(event.key))return;event.preventDefault();const index=active.items.findIndex(item=>item.id===currentId),next=(index+(["ArrowUp","ArrowLeft"].includes(event.key)?-1:1)+active.items.length)%active.items.length;currentId=active.items[next].id;show()});
+        function sendSize(){notify("ui/notifications/size-changed",{width:Math.ceil(window.innerWidth),height:Math.ceil(document.querySelector("main").getBoundingClientRect().height)})}new ResizeObserver(sendSize).observe(document.querySelector("main"));
+        async function connect(){try{const result=await request("ui/initialize",{protocolVersion:APP_PROTOCOL,appInfo:{name:"suwa-jewelry-creation-gallery",version:"1.1.0"},appCapabilities:{availableDisplayModes:["inline"]}});connected=true;hostCanMessage=Boolean(result?.hostCapabilities?.message?.text);hostCanUpdateContext=Boolean(result?.hostCapabilities?.updateModelContext);notify("ui/notifications/initialized")}catch{accept(window.openai?.toolInput);accept(window.openai?.toolOutput,true)}}accept(window.openai?.toolInput);accept(window.openai?.toolOutput,true);connect();
+      })();
+    </script>
+  </body>
+</html>

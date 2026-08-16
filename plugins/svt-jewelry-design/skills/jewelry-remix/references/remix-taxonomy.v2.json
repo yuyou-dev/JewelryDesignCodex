@@ -1,0 +1,73 @@
+{
+  "schema_version": 2,
+  "design_systems": {
+    "gold": {
+      "label": "黄金",
+      "themes": [
+        { "id": "auspicious-meaning", "label": "吉祥寓意" },
+        { "id": "realistic-zodiac", "label": "写实生肖" },
+        { "id": "cute-zodiac-auspicious-beast", "label": "可爱生肖&瑞兽" },
+        { "id": "refined-wedding", "label": "精致婚嫁" },
+        { "id": "lucky-symbol", "label": "幸运符号" },
+        { "id": "oriental-totem", "label": "东方图腾" }
+      ],
+      "styles": [
+        { "id": "rustic-ancient-gold", "label": "质璞古法" },
+        { "id": "neo-chinese-luxury", "label": "新中式雅奢" },
+        { "id": "ornate-palace", "label": "繁复宫廷" },
+        { "id": "minimal-fashion-gold", "label": "极简时尚黄金" },
+        { "id": "street-black-gold", "label": "潮酷黑金" },
+        { "id": "song-dynasty-elegance", "label": "宋韵雅致" },
+        { "id": "dunhuang-opulence", "label": "敦煌绮丽" }
+      ],
+      "morphologies": [
+        { "id": "archetype-silhouette", "label": "原型轮廓" },
+        { "id": "flowing-surface", "label": "流线曲面" },
+        { "id": "geometric-order", "label": "几何秩序" },
+        { "id": "openwork-filigree", "label": "镂空花丝" },
+        { "id": "three-dimensional-sculpture", "label": "立体雕塑" }
+      ],
+      "materials": [
+        { "id": "preserve-source-material", "label": "保留原生材质" },
+        { "id": "diamond-accent", "label": "点缀钻石" },
+        { "id": "enamel-accent", "label": "点缀珐琅" },
+        { "id": "colored-gem-accent", "label": "点缀彩色宝石" }
+      ]
+    },
+    "gem_set": {
+      "label": "镶嵌",
+      "themes": [
+        { "id": "nature-universe", "label": "自然万象" },
+        { "id": "geometric-space", "label": "几何空间" },
+        { "id": "arts-humanities", "label": "艺术人文" },
+        { "id": "emotional-symbol", "label": "情感符号" },
+        { "id": "gemstone-narrative", "label": "宝石叙事" }
+      ],
+      "styles": [
+        { "id": "historical-classic", "label": "历史经典" },
+        { "id": "romantic-elegance", "label": "浪漫优雅" },
+        { "id": "colorful-opulence", "label": "色彩华丽" },
+        { "id": "modern-minimal", "label": "现代极简" },
+        { "id": "art-deco", "label": "Art Deco" },
+        { "id": "artistic-avant-garde", "label": "艺术先锋" },
+        { "id": "italian-vintage", "label": "意式复古" }
+      ],
+      "morphologies": [
+        { "id": "archetype-silhouette", "label": "原型轮廓" },
+        { "id": "free-scatter", "label": "自由散布" },
+        { "id": "organic-natural", "label": "自然有机" },
+        { "id": "cluster-bloom", "label": "簇群绽放" },
+        { "id": "central-symmetry", "label": "中心对称" },
+        { "id": "gradient-pave", "label": "渐变铺陈" },
+        { "id": "dynamic-language", "label": "动态语言" }
+      ],
+      "materials": [
+        { "id": "preserve-source-material", "label": "保留原生材质" },
+        { "id": "diamond-accent", "label": "点缀钻石" },
+        { "id": "colored-gem-accent", "label": "点缀彩色宝石" },
+        { "id": "brushed-finish", "label": "拉丝工艺" },
+        { "id": "three-dimensional-relief", "label": "立体浮雕" }
+      ]
+    }
+  }
+}

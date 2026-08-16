@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "svt_jewelry_ui": {
+      "title": "苏哇科技珠宝 Apps UI",
+      "description": "Branded jewelry clarification, comparison/Gallery, local redraw, sketch-to-jewelry, and model try-on UI for Codex and compatible MCP Apps hosts.",
+      "cwd": ".",
+      "command": "node",
+      "args": [
+        "./mcp/server.mjs",
+        "--stdio"
+      ]
+    }
+  }
+}

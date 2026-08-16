@@ -1,0 +1,6 @@
+interface:
+  display_name: "Jewelry Design"
+  short_description: "Create professional jewelry design concepts."
+  default_prompt: "Use $jewelry-design to create a professional jewelry concept with materials, construction, and image-ready direction."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,44 @@
+{
+  "name": "jewelry-design-codex",
+  "interface": {
+    "displayName": "JewelryDesignCodex"
+  },
+  "plugins": [
+    {
+      "name": "svt-jewelry-design",
+      "source": {
+        "source": "local",
+        "path": "./plugins/svt-jewelry-design"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "svt-jewelry-video",
+      "source": {
+        "source": "local",
+        "path": "./plugins/svt-jewelry-video"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "svt-jewelry-feishu",
+      "source": {
+        "source": "local",
+        "path": "./plugins/svt-jewelry-feishu"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

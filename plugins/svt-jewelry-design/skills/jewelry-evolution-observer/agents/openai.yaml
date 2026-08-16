@@ -1,0 +1,6 @@
+interface:
+  display_name: "Jewelry Evolution Observer"
+  short_description: "Turn strong jewelry agent results into improvement proposals."
+  default_prompt: "Use $jewelry-evolution-observer to analyze this successful jewelry agent case and propose scoped system improvements without applying changes yet."
+policy:
+  allow_implicit_invocation: true

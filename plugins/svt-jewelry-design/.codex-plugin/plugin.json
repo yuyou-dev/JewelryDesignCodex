@@ -1,0 +1,41 @@
+{
+  "name": "svt-jewelry-design",
+  "version": "0.1.0",
+  "description": "Open-source conversational jewelry design and Apps UI for Codex.",
+  "author": {
+    "name": "\u82cf\u54c7\u79d1\u6280",
+    "url": "https://github.com/yuyou-dev"
+  },
+  "homepage": "https://github.com/yuyou-dev/JewelryDesignCodex",
+  "repository": "https://github.com/yuyou-dev/JewelryDesignCodex",
+  "license": "Apache-2.0",
+  "keywords": [
+    "codex",
+    "jewelry-design",
+    "apps-ui",
+    "gpt-image-2"
+  ],
+  "mcpServers": "./.mcp.json",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "\u82cf\u54c7\u79d1\u6280\u73e0\u5b9d\u8bbe\u8ba1",
+    "shortDescription": "Design, render, review, and deliver jewelry visuals.",
+    "longDescription": "JewelryDesignCodex packages the jewelry-studio router, specialist skills, a self-contained Image-2 runner, and Apps UI for structured intake, comparison, local redraw, sketch-to-jewelry, and model try-on placement.",
+    "developerName": "\u82cf\u54c7\u79d1\u6280",
+    "category": "Productivity",
+    "websiteURL": "https://github.com/yuyou-dev/JewelryDesignCodex",
+    "capabilities": [
+      "Interactive",
+      "MCP Apps UI",
+      "Write"
+    ],
+    "brandColor": "#C8A35A",
+    "composerIcon": "./assets/brand/logo-static.png",
+    "logo": "./assets/brand/logo-static.png",
+    "defaultPrompt": [
+      "\u7528\u84dd\u5b9d\u77f3\u548c\u94c2\u91d1\u8bbe\u8ba1\u4e00\u679a\u9ad8\u7ea7\u73e0\u5b9d\u9879\u94fe\u3002",
+      "\u57fa\u4e8e\u8fd9\u5f20\u539f\u6b3e\u73e0\u5b9d\u56fe\u505a 4 \u8def\u7206\u6b3e\u4e8c\u521b\u3002",
+      "\u628a\u8fd9\u5f20\u968f\u624b\u753b\u8f6c\u6210\u771f\u5b9e\u73e0\u5b9d\uff0c\u6216\u628a\u73e0\u5b9d\u653e\u5230\u6a21\u7279\u56fe\u4e0a\u5e76\u5148\u8ba9\u6211\u786e\u8ba4\u4f4d\u7f6e\u3002"
+    ]
+  }
+}

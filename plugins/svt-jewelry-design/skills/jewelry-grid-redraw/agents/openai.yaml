@@ -1,0 +1,6 @@
+interface:
+  display_name: "Jewelry Grid Redraw"
+  short_description: "Redraw one jewelry grid cell faithfully."
+  default_prompt: "Use $jewelry-grid-redraw to improve this jewelry grid cell while preserving product identity."
+policy:
+  allow_implicit_invocation: true

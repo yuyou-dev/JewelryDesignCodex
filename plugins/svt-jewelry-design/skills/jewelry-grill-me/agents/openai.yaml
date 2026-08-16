@@ -1,0 +1,6 @@
+interface:
+  display_name: "Grill Me 珠宝"
+  short_description: "通过结构化追问，把极度模糊的珠宝创作意图收敛为可执行设计方案"
+  default_prompt: "Use $jewelry-grill-me to help me clarify this vague jewelry idea before designing it."
+policy:
+  allow_implicit_invocation: true

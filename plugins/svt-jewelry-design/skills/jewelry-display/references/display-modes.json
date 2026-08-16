@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "role": "jewelry-display",
+  "compile_order": [
+    "product_truth",
+    "display_mode",
+    "composition_blueprint",
+    "support_physics",
+    "lighting_camera",
+    "negative_space_background",
+    "forbidden_elements"
+  ],
+  "modes": [
+    {
+      "id": "white_gallery_product",
+      "label": "white gallery product",
+      "default_aspect_ratio": "1:1",
+      "negative_space_ratio": "35-55%",
+      "product_scale": "large and product-readable",
+      "prop_policy": "no decorative props; only a clean gallery surface and subtle contact shadow",
+      "composition_templates": [
+        "centered three-quarter product view with clean silhouette and subtle grounding shadow",
+        "slightly off-center product on pale gray-white field with one quiet diagonal shadow"
+      ],
+      "support_physics": [
+        "product rests naturally on a clean opaque surface",
+        "all wearable structure and support/gallery construction remain visible"
+      ],
+      "lighting_camera": [
+        "large softbox reflection, crisp metal edge highlights, controlled gemstone sparkle",
+        "85mm product lens, f/8-like clarity, no dramatic poster lighting"
+      ],
+      "forbidden": [
+        "props",
+        "text",
+        "logo",
+        "extra jewelry",
+        "busy shadows"
+      ]
+    },
+    {
+      "id": "botanical_negative_space",
+      "label": "botanical negative space",
+      "default_aspect_ratio": "4:5",
+      "negative_space_ratio": "45-70%",
+      "product_scale": "small to medium but highest sharpness",
+      "prop_policy": "one flower, petal, leaf, or stem creates the quiet field; no bouquet clutter",
+      "composition_templates": [
+        "large cropped flower enters from left edge, pendant or ring sits in the lower right product zone, upper right remains calm empty field",
+        "single translucent petal fills the lower third as a soft stage, jewelry placed off-center above its fold, top half left quiet",
+        "one stem or leaf draws a diagonal from lower left to upper right, jewelry attached near one intersection point"
+      ],
+      "support_physics": [
+        "flower or petal touches only the back edge, chain back, or ring underside",
+        "hero stones, prongs, shank, pendant face, and earring drops remain unobscured"
+      ],
+      "lighting_camera": [
+        "soft botanical diffusion with crisp jewelry focus",
+        "macro product lens, shallow background falloff, flower texture lower contrast than jewelry"
+      ],
+      "forbidden": [
+        "random bouquet",
+        "flower sharper than jewelry",
+        "petals covering hero stone",
+        "brand text",
+        "poster title block"
+      ]
+    },
+    {
+      "id": "botanical_support_still_life",
+      "label": "botanical support still life",
+      "default_aspect_ratio": "4:5",
+      "negative_space_ratio": "35-60%",
+      "product_scale": "medium product with visible support contact",
+      "prop_policy": "flower, branch, shell, or vase acts as a cradle, rail, hook, or frame",
+      "composition_templates": [
+        "ring or earring pair held by a single branch fork entering from the upper right, quiet matte background behind",
+        "pendant chain drops through the throat of one calla lily, pendant face hanging clear below the petal edge",
+        "bracelet lightly hooked over a curved stem, product placed on lower third with open background above"
+      ],
+      "support_physics": [
+        "show believable contact point: hook, fold, fork, lip, or petal throat",
+        "support may cover only chain back, earring post back, or ring underside"
+      ],
+      "lighting_camera": [
+        "editorial still-life light with clean cast shadow",
+        "medium macro lens, controlled highlights on metal and stones, props softly modeled"
+      ],
+      "forbidden": [
+        "impossible floating",
+        "branch crossing hero details",
+        "vase becoming main subject",
+        "unreadable product structure"
+      ]
+    },
+    {
+      "id": "asymmetric_suspended_display",
+      "label": "asymmetric suspended display",
+      "default_aspect_ratio": "4:5",
+      "negative_space_ratio": "40-65%",
+      "product_scale": "medium, with clear continuity and gravity",
+      "prop_policy": "chain, bracelet, ring, or earring is draped, hung, threaded, or lightly suspended from one quiet support prop",
+      "composition_templates": [
+        "chain enters from top edge on two uneven verticals, pendant placed below center-right, left side remains quiet",
+        "bracelet arcs from lower left to upper right, one end sharp and one end softly receding, product face at right third",
+        "earring pair hangs at different heights from a pale sculptural lip, lower third open for shadow and breath"
+      ],
+      "support_physics": [
+        "gravity direction is clear and chain continuity is unbroken",
+        "contact points are visible and do not hide clasps, bails, or settings"
+      ],
+      "lighting_camera": [
+        "clean directional light with precise chain sparkle and believable hanging shadows",
+        "85-100mm product lens, shallow background only, product face crisp"
+      ],
+      "forbidden": [
+        "broken chain continuity",
+        "unexplained levitation",
+        "multiple competing props",
+        "cropped product edge"
+      ]
+    },
+    {
+      "id": "silk_suspension_display",
+      "label": "silk suspension display",
+      "default_aspect_ratio": "4:5",
+      "negative_space_ratio": "35-60%",
+      "product_scale": "medium product led by flowing textile line",
+      "prop_policy": "one translucent silk, organza, or ribbon creates movement and suspension without veiling the jewelry",
+      "composition_templates": [
+        "translucent silk ribbon twists from top left to bottom right, pendant resting visually in the lower curve, open pale background",
+        "ring or bracelet lightly cinches a flowing silk fold, jewelry face on the right third, fabric trailing softly behind",
+        "necklace chain follows a soft fabric S-curve, pendant hangs clear at the central lower third"
+      ],
+      "support_physics": [
+        "fabric supports from behind or beneath, never over the hero stone",
+        "fold tension and gravity make the suspension believable"
+      ],
+      "lighting_camera": [
+        "backlit translucent fabric with crisp jewelry edge highlights",
+        "soft high-key studio light, shallow depth on textile, sharp product plane"
+      ],
+      "forbidden": [
+        "silk covering gemstones",
+        "fabric sharper than jewelry",
+        "too many textile layers",
+        "fashion scarf campaign layout"
+      ]
+    },
+    {
+      "id": "editorial_still_life",
+      "label": "editorial still life",
+      "default_aspect_ratio": "4:5",
+      "negative_space_ratio": "30-55%",
+      "product_scale": "medium to large product on a controlled stage",
+      "prop_policy": "stone, frosted glass, shell, wood, paper, or textile provides one quiet surface",
+      "composition_templates": [
+        "product on frosted glass plinth with one diagonal shadow and calm background",
+        "ring or earrings on carved stone slab, product placed off-center with visible contact shadow",
+        "jewelry nested in a shell or paper fold, support texture lower contrast than stones"
+      ],
+      "support_physics": [
+        "product rests or leans with clear contact shadow",
+        "props never hide main stone, shank, clasp, bail, or earring attachment"
+      ],
+      "lighting_camera": [
+        "premium still-life studio light with polished reflections and clean shadows",
+        "product lens, high clarity on settings and gemstone facets"
+      ],
+      "forbidden": [
+        "messy tabletop",
+        "too many props",
+        "moodboard clutter",
+        "random lifestyle objects"
+      ]
+    },
+    {
+      "id": "hand_wearing_product_macro",
+      "label": "hand wearing product macro",
+      "default_aspect_ratio": "4:5",
+      "negative_space_ratio": "25-45%",
+      "product_scale": "wearable scale, jewelry dominant in focus",
+      "prop_policy": "natural hand only; optional neutral textile background",
+      "composition_templates": [
+        "elegant hand at three-quarter angle, ring on finger in sharp focus, background softly recedes",
+        "bracelet on wrist with relaxed pose, product face centered on wrist curve, neutral negative space around",
+        "earring near ear or held between fingers only when anatomy remains natural and product is clear"
+      ],
+      "support_physics": [
+        "wearing logic must be anatomically plausible",
+        "fingers, nails, and skin must not deform or hide key product details"
+      ],
+      "lighting_camera": [
+        "soft beauty product lighting, natural skin tone, crisp jewelry highlights",
+        "macro portrait-product lens, shallow background, jewelry plane sharp"
+      ],
+      "forbidden": [
+        "distorted hand",
+        "dirty nails",
+        "jewelry too small",
+        "skin over-smoothing",
+        "fashion editorial overpowering product"
+      ]
+    },
+    {
+      "id": "craft_macro",
+      "label": "craft macro",
+      "default_aspect_ratio": "1:1",
+      "negative_space_ratio": "20-40%",
+      "product_scale": "close crop on craft detail",
+      "prop_policy": "no decorative props; surface or shadow only",
+      "composition_templates": [
+        "close macro of prongs, bezel, stone grain, and metal transitions with one clean shadow",
+        "angled craft closeup showing gemstone depth, gallery support, and polished metal edge",
+        "detail crop on carving, pavé, enamel, or jade edge translucency with product structure intact"
+      ],
+      "support_physics": [
+        "support/gallery, prongs, bezels, or joints must be structurally plausible",
+        "crop must not remove the logic of the setting"
+      ],
+      "lighting_camera": [
+        "controlled macro light with precise sparkle and metal reflections",
+        "100mm macro, crisp craft plane, background falloff"
+      ],
+      "forbidden": [
+        "melted metal",
+        "plastic stone",
+        "over-blurred craft detail",
+        "unreadable setting"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Jewelry Grid Generation"
+  short_description: "Plan jewelry grids and image sets."
+  default_prompt: "Use $jewelry-grid-generation to create a consistent jewelry image grid or product image set."
+policy:
+  allow_implicit_invocation: true

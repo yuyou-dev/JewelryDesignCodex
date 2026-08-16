@@ -1,0 +1,27 @@
+{
+  "product_name": "High-jewelry diamond and pearl asymmetric earrings",
+  "category": "earrings",
+  "materials": [
+    "mirror-polished platinum",
+    "white diamonds",
+    "white freshwater pearls"
+  ],
+  "gemstones": [
+    "round brilliant white diamonds",
+    "pear-shaped pearl drops"
+  ],
+  "construction": "matched earring pair with platinum butterfly-wing diamond tops, visible hinge/drop connection, pearl drops hanging from small platinum loops, earring backs implied and structurally plausible",
+  "design": "light high-jewelry earring pair with airy diamond wings and pearl drops, suitable for asymmetric suspended product display",
+  "product_truth": "both earrings must remain readable as a pair, diamond wings must be crisp, pearl drops must hang naturally from visible connectors",
+  "scale": "delicate earring scale, pair can hang at different heights but neither earring should be cropped or hidden",
+  "constraints": [
+    "both pearl drops must remain visible",
+    "diamond wing shapes must not merge with the support",
+    "drop connectors must remain plausible"
+  ],
+  "forbidden": [
+    "extra earring pair",
+    "floating pearls without connectors",
+    "branch or prop crossing the diamond faces"
+  ]
+}

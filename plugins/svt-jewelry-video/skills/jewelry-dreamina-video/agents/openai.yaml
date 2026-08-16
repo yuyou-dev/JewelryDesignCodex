@@ -1,0 +1,6 @@
+interface:
+  display_name: "Jewelry Dreamina Video"
+  short_description: "Submit reference-based Seedance 2.0 jewelry videos."
+  default_prompt: "Use $jewelry-dreamina-video to submit or query a reference-based Dreamina Seedance 2.0 jewelry video."
+policy:
+  allow_implicit_invocation: true

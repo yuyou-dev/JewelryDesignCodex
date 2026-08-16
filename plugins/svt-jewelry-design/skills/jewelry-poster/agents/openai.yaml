@@ -1,0 +1,6 @@
+interface:
+  display_name: "Jewelry Poster"
+  short_description: "Plan luxury jewelry campaign posters."
+  default_prompt: "Use $jewelry-poster to create a luxury jewelry poster or angle-sheet direction."
+policy:
+  allow_implicit_invocation: true

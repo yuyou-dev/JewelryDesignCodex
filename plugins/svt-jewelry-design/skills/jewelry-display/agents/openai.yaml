@@ -1,0 +1,6 @@
+interface:
+  display_name: "Jewelry Display"
+  short_description: "Create product-focused luxury jewelry displays with refined negative space."
+  default_prompt: "Use $jewelry-display to create a product-focused high-jewelry display image with refined prop hierarchy, negative space, and product truth."
+policy:
+  allow_implicit_invocation: true

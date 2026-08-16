@@ -1,0 +1,6 @@
+interface:
+  display_name: "Jewelry Catalog"
+  short_description: "Plan SKU-ready jewelry catalog images."
+  default_prompt: "Use $jewelry-catalog to create a consistent catalog image plan for this jewelry SKU."
+policy:
+  allow_implicit_invocation: true

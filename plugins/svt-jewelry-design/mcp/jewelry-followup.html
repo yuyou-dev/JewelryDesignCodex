@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif);
+        --gold: #b98b32;
+        --gold-soft: color-mix(in srgb, var(--gold) 14%, transparent);
+        --surface: var(--color-background-primary, #ffffff);
+        --surface-2: var(--color-background-secondary, #f7f5f1);
+        --text: var(--color-text-primary, #171717);
+        --muted: var(--color-text-secondary, #6b6b6b);
+        --border: var(--color-border-secondary, #dedbd4);
+      }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; overflow: hidden; overscroll-behavior: none; }
+      body { color: var(--text); background: transparent; }
+      button, input, textarea, select { font: inherit; }
+
+      .shell { width: 100%; overflow: hidden; background: transparent; }
+      .header { padding: 7px 8px 11px; }
+      .title-row { display: flex; align-items: start; justify-content: space-between; gap: 16px; }
+      h1 { margin: 0; font-size: 18px; line-height: 1.3; letter-spacing: -0.015em; }
+      .progress { flex: none; color: var(--muted); font-size: 12px; font-weight: 650; line-height: 1.3; }
+      .prompt { max-width: 72ch; margin: 5px 0 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+      .body { display: grid; gap: 12px; padding: 0 8px 8px; }
+      .body.compact { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px 14px; }
+      .field { display: grid; min-width: 0; gap: 7px; }
+      .field.visual-field { grid-column: 1 / -1; }
+      .field-title { display: flex; align-items: baseline; gap: 7px; }
+      .field-label { font-size: 14px; font-weight: 700; line-height: 1.35; }
+      .required { color: var(--gold); font-size: 11px; }
+      .description { margin: -3px 0 0; color: var(--muted); font-size: 11px; line-height: 1.4; }
+
+      textarea, .other-input, .compact-select {
+        width: 100%;
+        min-height: 44px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        color: var(--text);
+        background: var(--surface-2);
+        outline: none;
+        transition: border-color 140ms ease, box-shadow 140ms ease;
+      }
+      textarea { min-height: 78px; resize: none; }
+      .body.compact textarea { min-height: 62px; }
+      textarea:focus, .other-input:focus, .compact-select:focus-visible {
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px var(--gold-soft);
+      }
+
+      .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .option { position: relative; min-width: 0; }
+      .option input { position: absolute; opacity: 0; pointer-events: none; }
+      .option-card {
+        display: grid;
+        min-height: 46px;
+        height: 100%;
+        align-content: center;
+        gap: 4px;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--surface-2);
+        cursor: pointer;
+        transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+      }
+      .option-card:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--gold) 55%, var(--border)); }
+      .option input:checked + .option-card { border-color: #171717; background: #171717; color: #fff; }
+      .option input:checked + .option-card .option-description { color: rgba(255,255,255,.76); }
+      .option input:focus-visible + .option-card { outline: 2px solid var(--gold); outline-offset: 2px; }
+      .option-name { font-size: 13px; font-weight: 650; line-height: 1.3; }
+      .option-description { color: var(--muted); font-size: 11px; line-height: 1.35; }
+
+      .compact-options { display: flex; gap: 7px; overflow-x: auto; overflow-y: hidden; padding: 1px 1px 4px; scrollbar-width: none; }
+      .compact-options::-webkit-scrollbar, .visual-options::-webkit-scrollbar { display: none; }
+      .compact-options .option { flex: 0 0 auto; }
+      .compact-options .option-card { min-height: 40px; padding: 8px 12px; white-space: nowrap; }
+
+      .visual-options { display: flex; gap: 9px; overflow-x: auto; overflow-y: hidden; padding: 1px 1px 5px; scroll-snap-type: x proximity; scrollbar-width: none; }
+      .visual-options .option { flex: 0 0 clamp(126px, 24vw, 164px); scroll-snap-align: start; }
+      .visual-options .option-card { min-height: 0; align-content: start; padding: 7px; }
+      .preview { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 7px; margin-bottom: 3px; background: var(--surface); }
+      .other-wrap { display: none; margin-top: 1px; }
+      .other-wrap.visible { display: block; }
+
+      .error { display: none; margin: -4px 0 0; color: var(--color-text-danger, #b42318); font-size: 11px; }
+      .error.visible { display: block; }
+      .footer { grid-column: 1 / -1; display: flex; min-height: 46px; align-items: center; justify-content: space-between; gap: 14px; padding-top: 2px; border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent); }
+      .hint { color: var(--muted); font-size: 11px; line-height: 1.35; }
+      .submit {
+        flex: none;
+        min-height: 42px;
+        border: 0;
+        border-radius: 999px;
+        padding: 10px 18px;
+        color: #fff;
+        background: #171717;
+        font-size: 13px;
+        font-weight: 720;
+        cursor: pointer;
+        transition: opacity 140ms ease, transform 140ms ease;
+      }
+      .submit:hover { transform: translateY(-1px); }
+      .submit:disabled { cursor: default; opacity: 0.48; transform: none; }
+      .status { display: none; padding: 8px; color: var(--muted); font-size: 12px; }
+      .status.visible { display: block; }
+
+      @media (max-width: 620px) {
+        .header, .body { padding-left: 12px; padding-right: 12px; }
+        .body.compact { grid-template-columns: 1fr; gap: 9px; }
+        .field.visual-field, .footer { grid-column: auto; }
+        .options:not(.visual-options):not(.compact-options) { grid-template-columns: 1fr; }
+        .visual-options .option { flex-basis: 118px; }
+        .footer { align-items: stretch; flex-direction: column; gap: 7px; padding-top: 8px; }
+        .submit { width: 100%; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell" aria-live="polite">
+      <header class="header">
+        <div class="title-row">
+          <h1 id="title">确认珠宝设计方向</h1>
+          <span class="progress" id="progress" aria-live="polite"></span>
+        </div>
+        <p class="prompt" id="prompt">请确认会改变设计身份的关键选择。</p>
+      </header>
+      <form class="body" id="form"></form>
+      <div class="status" id="status"></div>
+    </main>
+
+    <script>
+      (() => {
+        const APP_PROTOCOL = "2026-01-26";
+        const pending = new Map();
+        let nextId = 1;
+        let activeForm = null;
+        let connected = false;
+        let hostCanMessage = false;
+
+        const $ = (selector) => document.querySelector(selector);
+        const post = (message) => window.parent.postMessage(message, "*");
+
+        function request(method, params, timeout = 4000) {
+          const id = nextId++;
+          post({ jsonrpc: "2.0", id, method, params });
+          return new Promise((resolve, reject) => {
+            const timer = window.setTimeout(() => {
+              pending.delete(id);
+              reject(new Error(`${method} timed out`));
+            }, timeout);
+            pending.set(id, { resolve, reject, timer });
+          });
+        }
+
+        function notify(method, params = {}) {
+          post({ jsonrpc: "2.0", method, params });
+        }
+
+        function parseJson(text) {
+          if (typeof text !== "string") return null;
+          try { return JSON.parse(text); } catch (_) { return null; }
+        }
+
+        function extractEnvelope(value, depth = 0) {
+          if (!value || typeof value !== "object" || depth > 2) return null;
+          const form = Array.isArray(value.fields)
+            ? value
+            : value.form && Array.isArray(value.form.fields)
+              ? value.form
+              : value.structuredContent?.form;
+          if (form) {
+            return { form, media: value._meta?.formMedia || value.formMedia || {} };
+          }
+          for (const key of ["result", "toolOutput", "output"]) {
+            const nested = extractEnvelope(value[key], depth + 1);
+            if (nested) return nested;
+          }
+          for (const block of Array.isArray(value.content) ? value.content : []) {
+            const nested = extractEnvelope(parseJson(block?.text), depth + 1);
+            if (nested) return nested;
+          }
+          return null;
+        }
+
+        function formWithMedia(form, media) {
+          return {
+            ...form,
+            fields: form.fields.map((field) => ({
+              ...field,
+              ...(field.options ? {
+                options: field.options.map((option) => ({
+                  ...option,
+                  ...(option.preview || !media?.[field.id]?.[option.id]
+                    ? {}
+                    : { preview: media[field.id][option.id] }),
+                })),
+              } : {}),
+            })),
+          };
+        }
+
+        function acceptPayload(value) {
+          const envelope = extractEnvelope(value);
+          if (!envelope) return;
+          activeForm = formWithMedia(envelope.form, envelope.media);
+          render(activeForm);
+        }
+
+        window.addEventListener("message", (event) => {
+          if (event.source !== window.parent) return;
+          const message = event.data;
+          if (!message || message.jsonrpc !== "2.0") return;
+
+          if (Object.prototype.hasOwnProperty.call(message, "id") && !message.method) {
+            const waiter = pending.get(message.id);
+            if (!waiter) return;
+            window.clearTimeout(waiter.timer);
+            pending.delete(message.id);
+            if (message.error) waiter.reject(new Error(message.error.message || "Host request failed"));
+            else waiter.resolve(message.result);
+            return;
+          }
+
+          if (message.method === "ui/notifications/tool-input") {
+            acceptPayload(message.params?.arguments ?? message.params);
+          } else if (message.method === "ui/notifications/tool-result") {
+            acceptPayload(message.params);
+          } else if (message.method === "ui/notifications/host-context-changed") {
+            applyHostContext(message.params);
+          }
+        });
+
+        function applyHostContext(context) {
+          if (!context) return;
+          if (context.theme === "dark" || context.theme === "light") {
+            document.documentElement.dataset.theme = context.theme;
+          }
+          const variables = context.styles?.variables;
+          if (variables) {
+            for (const [name, value] of Object.entries(variables)) {
+              if (typeof value === "string") document.documentElement.style.setProperty(name, value);
+            }
+          }
+        }
+
+        function fieldHeading(field) {
+          const wrap = document.createElement("div");
+          wrap.className = "field-title";
+          const label = document.createElement("span");
+          label.className = "field-label";
+          label.textContent = field.label;
+          wrap.append(label);
+          if (field.required) {
+            const required = document.createElement("span");
+            required.className = "required";
+            required.textContent = "必填";
+            wrap.append(required);
+          }
+          return wrap;
+        }
+
+        function optionControl(field, option, index) {
+          const wrap = document.createElement("div");
+          wrap.className = "option";
+          const input = document.createElement("input");
+          input.type = field.type === "single" ? "radio" : "checkbox";
+          input.name = field.id;
+          input.id = `${field.id}-${index}`;
+          input.value = option.id;
+          const card = document.createElement("label");
+          card.className = "option-card";
+          card.htmlFor = input.id;
+          if (option.preview) {
+            const image = document.createElement("img");
+            image.className = "preview";
+            image.alt = option.label;
+            image.src = option.preview;
+            image.addEventListener("error", () => image.remove());
+            card.append(image);
+          }
+          const name = document.createElement("span");
+          name.className = "option-name";
+          name.textContent = option.label;
+          card.append(name);
+          if (option.description) {
+            const description = document.createElement("span");
+            description.className = "option-description";
+            description.textContent = option.description;
+            card.append(description);
+          }
+          wrap.append(input, card);
+          return wrap;
+        }
+
+        function compactSelect(field) {
+          const select = document.createElement("select");
+          select.className = "compact-select";
+          select.name = field.id;
+          select.setAttribute("aria-label", field.label);
+          const placeholder = document.createElement("option");
+          placeholder.value = "";
+          placeholder.textContent = "请选择";
+          select.append(placeholder);
+          for (const option of field.options || []) {
+            const element = document.createElement("option");
+            element.value = option.id;
+            element.textContent = option.label;
+            select.append(element);
+          }
+          return select;
+        }
+
+        function hasOtherSelected(section, field) {
+          const select = section.querySelector(`select[name="${CSS.escape(field.id)}"]`);
+          if (select) return select.value === "__other__";
+          return Boolean(section.querySelector('input[value="__other__"]:checked'));
+        }
+
+        function renderField(field, compact) {
+          const section = document.createElement("section");
+          section.className = "field";
+          section.dataset.fieldId = field.id;
+          section.append(fieldHeading(field));
+          if (field.description) {
+            const description = document.createElement("p");
+            description.className = "description";
+            description.textContent = field.description;
+            section.append(description);
+          }
+
+          if (field.type === "text") {
+            const textarea = document.createElement("textarea");
+            textarea.name = field.id;
+            textarea.placeholder = field.placeholder || "请输入你的想法";
+            section.append(textarea);
+          } else {
+            const visual = (field.options || []).some((option) => option.preview);
+            section.classList.toggle("visual-field", visual);
+            if (compact && field.type === "single" && !visual) {
+              section.append(compactSelect(field));
+            } else {
+              const options = document.createElement("div");
+              options.className = visual
+                ? "options visual-options"
+                : compact
+                  ? "options compact-options"
+                  : "options";
+              options.setAttribute("role", visual ? "list" : "group");
+              options.setAttribute("aria-label", field.label);
+              (field.options || []).forEach((option, index) => {
+                options.append(optionControl(field, option, index));
+              });
+              section.append(options);
+            }
+
+            if ((field.options || []).some((option) => option.id === "__other__")) {
+              const otherWrap = document.createElement("div");
+              otherWrap.className = "other-wrap";
+              const otherInput = document.createElement("input");
+              otherInput.className = "other-input";
+              otherInput.name = `${field.id}__other`;
+              otherInput.placeholder = field.otherPlaceholder || "请补充其他方向";
+              otherWrap.append(otherInput);
+              section.append(otherWrap);
+              section.addEventListener("change", () => {
+                const selected = hasOtherSelected(section, field);
+                otherWrap.classList.toggle("visible", selected);
+                if (selected) otherInput.focus();
+              });
+            }
+          }
+
+          const error = document.createElement("p");
+          error.className = "error";
+          error.textContent = "请完成这一项";
+          section.append(error);
+          section.addEventListener("input", () => error.classList.remove("visible"));
+          section.addEventListener("change", () => error.classList.remove("visible"));
+          return section;
+        }
+
+        function render(form) {
+          $("#title").textContent = form.title || "确认珠宝设计方向";
+          $("#prompt").textContent = form.prompt || "请确认会改变设计身份的关键选择。";
+          const formElement = $("#form");
+          formElement.replaceChildren();
+          const optionLoad = form.fields.reduce((total, field) => total + (field.options?.length || 0), 0);
+          const compact = form.fields.length >= 3 || optionLoad > 12;
+          formElement.classList.toggle("compact", compact);
+          form.fields.forEach((field) => formElement.append(renderField(field, compact)));
+
+          const footer = document.createElement("footer");
+          footer.className = "footer";
+          const hint = document.createElement("span");
+          hint.className = "hint";
+          hint.textContent = "所有必填项完成后即可一次提交。";
+          const submit = document.createElement("button");
+          submit.className = "submit";
+          submit.type = "submit";
+          submit.textContent = form.submitLabel || "提交设计方向";
+          footer.append(hint, submit);
+          formElement.append(footer);
+          formElement.onsubmit = submitForm;
+          formElement.oninput = () => updateProgress(formElement);
+          formElement.onchange = () => updateProgress(formElement);
+          updateProgress(formElement);
+          $("#status").classList.remove("visible");
+          sendSize();
+        }
+
+        function valueFor(field, formData) {
+          if (field.type === "text") {
+            const value = String(formData.get(field.id) || "").trim();
+            return value ? { value, label: value } : null;
+          }
+          const selected = formData.getAll(field.id).map(String);
+          if (!selected.length) return null;
+          const labels = selected.map((id) => {
+            if (id === "__other__") return String(formData.get(`${field.id}__other`) || "").trim();
+            return field.options.find((option) => option.id === id)?.label || id;
+          }).filter(Boolean);
+          if (!labels.length) return null;
+          return field.type === "single"
+            ? { value: selected[0], label: labels[0] }
+            : { value: selected, label: labels };
+        }
+
+        function collect(formElement) {
+          const data = new FormData(formElement);
+          const answers = [];
+          let valid = true;
+          for (const field of activeForm.fields) {
+            const answer = valueFor(field, data);
+            const section = formElement.querySelector(`[data-field-id="${CSS.escape(field.id)}"]`);
+            const error = section.querySelector(".error");
+            const missing = Boolean(field.required && !answer);
+            error.classList.toggle("visible", missing);
+            if (missing) valid = false;
+            if (answer) answers.push({ id: field.id, fieldLabel: field.label, ...answer });
+          }
+          return { valid, answers };
+        }
+
+        function updateProgress(formElement) {
+          if (!activeForm) return;
+          const data = new FormData(formElement);
+          const completed = activeForm.fields.filter((field) => valueFor(field, data)).length;
+          $("#progress").textContent = `${completed} / ${activeForm.fields.length}`;
+        }
+
+        function messageFor(answers) {
+          const lines = answers.map((answer) => {
+            const label = Array.isArray(answer.label) ? answer.label.join("、") : answer.label;
+            return `- ${answer.fieldLabel}：${label}`;
+          });
+          const context = {
+            formId: activeForm.formId,
+            fieldSignature: activeForm.fields.map((field) => ({ id: field.id, type: field.type })),
+            answers,
+          };
+          return `${activeForm.messagePrefix || "已提交珠宝设计方向"}：\n${lines.join("\n")}\n\nCurrent jewelry form context (JSON):\n${JSON.stringify(context)}`;
+        }
+
+        async function sendMessage(text) {
+          if (connected && hostCanMessage) {
+            try {
+              await request("ui/message", { role: "user", content: [{ type: "text", text }] }, 8000);
+              return;
+            } catch (_) {}
+          }
+          if (window.openai?.sendFollowUpMessage) {
+            await window.openai.sendFollowUpMessage({ prompt: text });
+            return;
+          }
+          throw new Error("当前宿主不支持表单消息回写");
+        }
+
+        async function submitForm(event) {
+          event.preventDefault();
+          const formElement = event.currentTarget;
+          const { valid, answers } = collect(formElement);
+          if (!valid || !answers.length) {
+            const firstMissing = formElement.querySelector(".error.visible")?.closest(".field");
+            firstMissing?.querySelector("select, textarea, input:not([type=hidden])")?.focus();
+            sendSize();
+            return;
+          }
+          const button = formElement.querySelector(".submit");
+          button.disabled = true;
+          button.textContent = "正在提交…";
+          try {
+            await sendMessage(messageFor(answers));
+            formElement.querySelectorAll("input, textarea, button").forEach((control) => control.disabled = true);
+            button.textContent = "已提交";
+            const status = $("#status");
+            status.textContent = "设计方向已提交，我会在对话中继续完成后续工作。";
+            status.classList.add("visible");
+          } catch (error) {
+            button.disabled = false;
+            button.textContent = activeForm.submitLabel || "提交设计方向";
+            const status = $("#status");
+            status.textContent = error.message;
+            status.classList.add("visible");
+          }
+          sendSize();
+        }
+
+        function sendSize() {
+          const main = document.querySelector("main");
+          notify("ui/notifications/size-changed", {
+            width: Math.ceil(main.getBoundingClientRect().width),
+            height: Math.ceil(main.getBoundingClientRect().height),
+          });
+        }
+
+        async function connect() {
+          try {
+            const result = await request("ui/initialize", {
+              protocolVersion: APP_PROTOCOL,
+              appInfo: { name: "svt-jewelry-followup", version: "1.0.0" },
+              appCapabilities: { availableDisplayModes: ["inline", "fullscreen"] },
+            });
+            connected = true;
+            hostCanMessage = Boolean(result?.hostCapabilities?.message?.text);
+            applyHostContext(result?.hostContext);
+            notify("ui/notifications/initialized");
+          } catch (_) {
+            acceptPayload(window.openai?.toolInput);
+            acceptPayload(window.openai?.toolOutput);
+          }
+        }
+
+        new ResizeObserver(sendSize).observe(document.querySelector("main"));
+        connect();
+        acceptPayload(window.openai?.toolInput);
+        acceptPayload(window.openai?.toolOutput);
+      })();
+    </script>
+  </body>
+</html>

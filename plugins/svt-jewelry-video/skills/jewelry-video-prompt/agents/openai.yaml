@@ -1,0 +1,6 @@
+interface:
+  display_name: "Jewelry Video Prompt"
+  short_description: "Prepare reference-first Seedance 2.0 jewelry video prompts."
+  default_prompt: "Use $jewelry-video-prompt to prepare a reference-first Seedance 2.0 video prompt for this jewelry."
+policy:
+  allow_implicit_invocation: true

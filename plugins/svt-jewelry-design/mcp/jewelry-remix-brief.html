@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>爆款二创方向</title>
+    <style>
+      :root { color-scheme: light dark; font-family: system-ui, -apple-system, "PingFang SC", sans-serif; }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; overflow-y: hidden; overscroll-behavior: none; }
+      body { color: var(--text, #171717); background: transparent; }
+      main { padding: 7px 9px 9px; overflow: hidden; }
+      h1 { margin: 0; font-size: 19px; line-height: 1.25; letter-spacing: -.015em; }
+      .lead { margin: 5px 0 11px; color: #737373; font-size: 13px; line-height: 1.45; }
+      .form-grid { display: grid; grid-template-columns: minmax(250px, .9fr) minmax(330px, 1.1fr); gap: 14px; }
+      .group { min-width: 0; padding: 0; }
+      .group + .group { padding-left: 14px; border-left: 1px solid color-mix(in srgb, currentColor 12%, transparent); }
+      .group-title { margin: 0 0 8px; font-size: 11px; font-weight: 720; letter-spacing: .1em; }
+      #control-fields, #language-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 10px; }
+      .field { min-width: 0; margin: 0; }
+      summary { list-style: none; }
+      summary::-webkit-details-marker { display: none; }
+      .label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: 680; }
+      .options { display: flex; flex-wrap: wrap; gap: 5px; }
+      .choice { position: relative; }
+      .choice input { position: absolute; opacity: 0; pointer-events: none; }
+      .choice span { display: block; min-height: 34px; padding: 8px 9px; border-radius: 8px; border: 1px solid color-mix(in srgb, currentColor 14%, transparent); background: color-mix(in srgb, currentColor 3%, transparent); font-size: 11px; line-height: 1.35; cursor: pointer; }
+      .choice input:checked + span { color: #fff; border-color: #171717; background: #171717; }
+      .choice input:focus-visible + span { outline: 2px solid currentColor; outline-offset: 2px; }
+      textarea { width: 100%; min-height: 64px; resize: none; padding: 9px 10px; border-radius: 8px; border: 1px solid color-mix(in srgb, currentColor 14%, transparent); background: transparent; color: inherit; font: inherit; font-size: 12px; line-height: 1.45; }
+      .system-field { grid-column: 1 / -1; }
+      .custom-input { width: 100%; min-height: 34px; margin-top: 5px; padding: 7px 9px; border-radius: 8px; border: 1px solid color-mix(in srgb, currentColor 14%, transparent); background: transparent; color: inherit; font: inherit; font-size: 12px; }
+      .empty-note { grid-column: 1 / -1; margin: 2px 0; color: #737373; font-size: 12px; line-height: 1.45; }
+      .footer { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-top: 10px; padding-top: 9px; border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent); }
+      .hint, .status { color: #737373; font-size: 11px; line-height: 1.4; }
+      .hint { margin-right: auto; }
+      button { min-height: 44px; border: 0; border-radius: 999px; padding: 10px 18px; background: #171717; color: #fff; font: inherit; font-size: 13px; font-weight: 720; cursor: pointer; }
+      button:disabled { opacity: .55; cursor: default; }
+      button:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+      .status { display: none; margin-top: 10px; }
+      .status.visible { display: block; }
+      @media (prefers-color-scheme: dark) { body { --text: #f5f5f5; } }
+      @media (max-width: 720px) {
+        main { padding-inline: 4px; }
+        .form-grid { grid-template-columns: minmax(190px, .85fr) minmax(250px, 1.15fr); gap: 10px; }
+        .group + .group { padding-left: 10px; }
+        #control-fields, #language-fields { gap: 7px; }
+        .choice span { min-height: 32px; padding: 7px; font-size: 11px; }
+      }
+      @media (max-width: 520px) {
+        .form-grid { grid-template-columns: minmax(130px, .8fr) minmax(190px, 1.2fr); gap: 7px; }
+        .group + .group { padding-left: 7px; }
+        #control-fields { grid-template-columns: 1fr; }
+        #language-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .footer { gap: 7px; }
+        .hint { display: none; }
+      }
+      @media (max-width: 360px) {
+        .form-grid { grid-template-columns: minmax(106px, .78fr) minmax(174px, 1.22fr); gap: 6px; }
+        .group + .group { padding-left: 6px; border-left: 1px solid color-mix(in srgb, currentColor 12%, transparent); }
+        #control-fields, #language-fields { gap: 6px; }
+        .compact-field { padding-bottom: 4px; border-bottom: 1px solid color-mix(in srgb, currentColor 9%, transparent); }
+        .compact-field summary { position: relative; min-height: 32px; margin: 0; padding: 7px 14px 6px 0; cursor: pointer; }
+        .compact-field summary::after { position: absolute; right: 2px; content: "+"; color: #737373; font-weight: 500; }
+        .compact-field[open] summary::after { content: "−"; }
+        .compact-field .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding-bottom: 4px; }
+        .compact-field .choice span { width: 100%; min-height: 32px; padding: 6px 4px; text-align: center; }
+      }
+      @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation: none !important; transition: none !important; } }
+    </style>
+  </head>
+  <body>
+    <main data-brand="{{BRAND_NAME}}" aria-label="{{BRAND_NAME}}爆款二创表单">
+      <h1 id="title">确认爆款二创方向</h1>
+      <p class="lead" id="prompt">原款图负责结构，这一轮只确认变化幅度与设计语言。</p>
+      <form id="form">
+        <div class="form-grid">
+          <section class="group">
+            <p class="group-title">变化控制</p>
+            <div id="control-fields"></div>
+          </section>
+          <section class="group">
+            <p class="group-title">设计语言</p>
+            <div id="language-fields"></div>
+          </section>
+        </div>
+        <div class="footer">
+          <span class="hint">提交后将直接规划 REMIX-A–H，不再重复确认。</span>
+          <button type="submit">提交二创方向</button>
+        </div>
+      </form>
+      <p id="status" class="status"></p>
+    </main>
+    <script>
+      (() => {
+        const APP_PROTOCOL = "2026-01-26";
+        const pending = new Map();
+        let requestId = 1;
+        let connected = false;
+        let hostCanMessage = false;
+        let active = null;
+        const taxonomy = {{REMIX_TAXONOMY_JSON}};
+        const defaults = {
+          title: "确认爆款二创方向", prompt: "原款图负责结构，这一轮只确认变化幅度与设计语言。",
+          schemaVersion: 2, designSystem: "",
+          count: 4, structureFidelity: "medium", intensity: "balanced", fusionStrategy: "pattern_translation",
+          themes: [], morphologies: [], styles: [], materials: [],
+          customThemes: "", customMorphologies: "", customStyles: "", customMaterials: "",
+          referenceRole: "style", direction: "", hasReferenceImages: false,
+        };
+        const fields = {
+          control: [
+            { id: "count", label: "生成几个独立方向？", type: "single", options: [["4", "4 款"], ["8", "8 款"]] },
+            { id: "structureFidelity", label: "原款结构保留度", type: "single", options: [["high", "高·细节二创"], ["medium", "中·保轮廓"], ["low", "低·保家族感"]] },
+            { id: "intensity", label: "创改强度", type: "single", options: [["subtle", "微调"], ["balanced", "平衡"], ["bold", "重塑"]] },
+            { id: "fusionStrategy", label: "元素融合方式", type: "single", options: [["shape_grafting", "保形嫁接"], ["pattern_translation", "纹样转译"], ["structural_rebuild", "结构重组"]] },
+          ],
+          reference: { id: "referenceRole", label: "额外参考图角色", type: "single", options: [["style", "风格"], ["line", "线条"], ["material", "材质"], ["craft", "工艺"], ["composition", "构图"], ["mood", "情绪"]] },
+        };
+        const languageLabels = { themes: "主题母题", morphologies: "形态语言", styles: "审美风格", materials: "材质工艺" };
+        const customNames = { themes: "customThemes", morphologies: "customMorphologies", styles: "customStyles", materials: "customMaterials" };
+
+        const post = (message) => window.parent.postMessage(message, "*");
+        const request = (method, params, timeout = 5000) => new Promise((resolve, reject) => {
+          const id = requestId++;
+          const timer = setTimeout(() => { pending.delete(id); reject(new Error("宿主响应超时")); }, timeout);
+          pending.set(id, { resolve, reject, timer });
+          post({ jsonrpc: "2.0", id, method, params });
+        });
+        const notify = (method, params = {}) => post({ jsonrpc: "2.0", method, params });
+        window.addEventListener("message", (event) => {
+          if (event.source !== window.parent) return;
+          const message = event.data;
+          if (!message || message.jsonrpc !== "2.0") return;
+          if (message.id && pending.has(message.id)) {
+            const item = pending.get(message.id); pending.delete(message.id); clearTimeout(item.timer);
+            message.error ? item.reject(new Error(message.error.message)) : item.resolve(message.result);
+          }
+          if (message.method === "ui/notifications/tool-input") accept(message.params?.arguments ?? message.params);
+          if (message.method === "ui/notifications/tool-result") accept(message.params);
+        });
+
+        function parsed(value, depth = 0) {
+          if (depth > 2 || value == null) return value;
+          if (typeof value === "string") { try { return parsed(JSON.parse(value), depth + 1); } catch (_) { return value; } }
+          if (Array.isArray(value)) return value.map((item) => parsed(item, depth + 1));
+          if (typeof value === "object") {
+            if (value.structuredContent?.remixBrief) return value.structuredContent.remixBrief;
+            if (value.remixBrief) return value.remixBrief;
+            if (value.result) return parsed(value.result, depth + 1);
+            const text = value.content?.length === 1 && value.content[0]?.type === "text" ? value.content[0].text : null;
+            if (text) { const candidate = parsed(text, depth + 1); if (candidate !== text) return candidate; }
+            if (value.defaults || value.title || value.hasReferenceImages != null) return { ...value.defaults, title: value.title, prompt: value.prompt, hasReferenceImages: value.hasReferenceImages };
+          }
+          return value;
+        }
+        function accept(value) {
+          const data = parsed(value);
+          if (!data || typeof data !== "object" || Array.isArray(data)) return;
+          active = sanitize({ ...defaults, ...data });
+          render();
+        }
+        function languageFields(systemId) {
+          const system = taxonomy.designSystems[systemId];
+          if (!system) return [];
+          return Object.keys(languageLabels).map((id) => ({
+            id, label: languageLabels[id], type: "multi", options: [...system[id], ["other", "其他"]],
+          }));
+        }
+        function sanitize(value) {
+          const system = taxonomy.designSystems[value.designSystem];
+          if (!system) return { ...value, designSystem: "", themes: [], morphologies: [], styles: [], materials: [] };
+          const next = { ...value };
+          for (const id of Object.keys(languageLabels)) {
+            const allowed = new Set([...system[id].map(([optionId]) => optionId), "other"]);
+            next[id] = Array.isArray(next[id]) ? [...new Set(next[id].filter((item) => allowed.has(item)))] : [];
+            if (!next[id].includes("other")) next[customNames[id]] = "";
+          }
+          return next;
+        }
+        function choice(field, selected) {
+          const compact = window.matchMedia("(max-width: 360px)").matches;
+          const wrap = document.createElement(compact ? "details" : "div"); wrap.className = compact ? "field compact-field" : "field";
+          const label = document.createElement(compact ? "summary" : "span"); label.className = "label"; label.textContent = field.label; wrap.append(label);
+          const options = document.createElement("div"); options.className = "options";
+          for (const [id, text] of field.options) {
+            const item = document.createElement("label"); item.className = "choice";
+            const input = document.createElement("input"); input.type = field.type === "multi" ? "checkbox" : "radio"; input.name = field.id; input.value = id;
+            input.checked = field.type === "multi" ? (selected || []).includes(id) : String(selected) === id;
+            const span = document.createElement("span"); span.textContent = text; item.append(input, span); options.append(item);
+          }
+          wrap.append(options);
+          if (field.type === "multi") {
+            const customName = customNames[field.id];
+            const custom = document.createElement("input"); custom.className = "custom-input"; custom.name = customName;
+            custom.placeholder = `输入其他${field.label}`; custom.value = active[customName] || "";
+            custom.hidden = !(selected || []).includes("other"); wrap.append(custom);
+            const other = options.querySelector('input[value="other"]');
+            other?.addEventListener("change", () => { custom.hidden = !other.checked; if (!other.checked) custom.value = ""; else custom.focus(); sendSize(); });
+          }
+          if (compact) wrap.addEventListener("toggle", () => { if (wrap.open) document.querySelectorAll("details.compact-field[open]").forEach((item) => { if (item !== wrap) item.open = false; }); });
+          return wrap;
+        }
+        function render() {
+          document.querySelector("#title").textContent = active.title || "确认爆款二创方向";
+          document.querySelector("#prompt").textContent = active.prompt || defaults.prompt;
+          const controls = document.querySelector("#control-fields"); controls.replaceChildren(...fields.control.map((field) => choice(field, String(active[field.id]))));
+          const language = document.querySelector("#language-fields");
+          const systemField = choice({ id: "designSystem", label: "产品体系", type: "single", options: [["gold", "黄金"], ["gem_set", "镶嵌"]] }, active.designSystem);
+          systemField.classList.add("system-field");
+          const nodes = [systemField];
+          if (active.designSystem) nodes.push(...languageFields(active.designSystem).map((field) => choice(field, active[field.id])));
+          else { const note = document.createElement("p"); note.className = "empty-note"; note.textContent = "请先选择黄金或镶嵌，表单将展开对应设计语言。"; nodes.push(note); }
+          if (active.hasReferenceImages) nodes.push(choice(fields.reference, active.referenceRole));
+          const direction = document.createElement("div"); direction.className = "field";
+          direction.innerHTML = '<label class="label" for="direction">补充方向（可选）</label><textarea id="direction" name="direction" placeholder="例如：更轻盈、保留主石、面向年轻日常系列"></textarea>';
+          direction.querySelector("textarea").value = active.direction || ""; nodes.push(direction); language.replaceChildren(...nodes);
+          language.querySelectorAll('input[name="designSystem"]').forEach((input) => input.addEventListener("change", () => {
+            active = sanitize({ ...active, ...collect(), designSystem: input.value }); render();
+          }));
+          sendSize();
+        }
+        const labels = Object.fromEntries([...fields.control, fields.reference].flatMap((field) => field.options.map(([id, text]) => [`${field.id}:${id}`, text])));
+        function collect() {
+          const data = new FormData(document.querySelector("#form"));
+          const answer = { schemaVersion: taxonomy.schemaVersion, designSystem: String(data.get("designSystem") || "") };
+          for (const field of fields.control) answer[field.id] = field.id === "count" ? Number(data.get(field.id)) : String(data.get(field.id) || "");
+          for (const field of languageFields(answer.designSystem)) {
+            answer[field.id] = data.getAll(field.id).map(String);
+            answer[customNames[field.id]] = String(data.get(customNames[field.id]) || "").trim();
+          }
+          for (const id of Object.keys(languageLabels)) {
+            answer[id] ||= [];
+            answer[customNames[id]] ||= "";
+          }
+          if (active.hasReferenceImages) answer.referenceRole = String(data.get("referenceRole") || "style");
+          answer.direction = String(data.get("direction") || "").trim();
+          return answer;
+        }
+        function optionLabel(systemId, fieldId, optionId, answer) {
+          if (optionId === "other") return answer[customNames[fieldId]];
+          return taxonomy.designSystems[systemId]?.[fieldId]?.find(([id]) => id === optionId)?.[1] || optionId;
+        }
+        function readable(answer) {
+          const lines = [
+            `- 方案数：${answer.count} 款`,
+            `- 产品体系：${taxonomy.designSystems[answer.designSystem].label}`,
+            `- 结构保留：${labels[`structureFidelity:${answer.structureFidelity}`]}`,
+            `- 创改强度：${labels[`intensity:${answer.intensity}`]}`,
+            `- 融合策略：${labels[`fusionStrategy:${answer.fusionStrategy}`]}`,
+            `- 主题：${answer.themes.map((id) => optionLabel(answer.designSystem, "themes", id, answer)).join("、")}`,
+            `- 形态：${answer.morphologies.map((id) => optionLabel(answer.designSystem, "morphologies", id, answer)).join("、")}`,
+            `- 风格：${answer.styles.map((id) => optionLabel(answer.designSystem, "styles", id, answer)).join("、")}`,
+            `- 材质工艺：${answer.materials.map((id) => optionLabel(answer.designSystem, "materials", id, answer)).join("、")}`,
+          ];
+          if (answer.referenceRole) lines.push(`- 参考图角色：${labels[`referenceRole:${answer.referenceRole}`]}`);
+          if (answer.direction) lines.push(`- 补充方向：${answer.direction}`);
+          const context = { formId: active.formId, ...answer };
+          return `已提交爆款二创方向：\n${lines.join("\n")}\n\nCurrent jewelry remix brief (JSON):\n${JSON.stringify(context)}`;
+        }
+        async function sendMessage(text) {
+          if (connected && hostCanMessage) { try { await request("ui/message", { role: "user", content: [{ type: "text", text }] }, 8000); return; } catch (_) {} }
+          if (window.openai?.sendFollowUpMessage) { await window.openai.sendFollowUpMessage({ prompt: text }); return; }
+          throw new Error("当前宿主不支持表单回写");
+        }
+        document.querySelector("#form").addEventListener("submit", async (event) => {
+          event.preventDefault(); const form = event.currentTarget; const answer = collect();
+          const status = document.querySelector("#status");
+          if (!answer.designSystem) { status.textContent = "请先选择黄金或镶嵌体系。"; status.classList.add("visible"); sendSize(); return; }
+          if ([answer.themes, answer.morphologies, answer.styles, answer.materials].some((items) => !items.length)) { status.textContent = "请至少选择一项主题、形态、风格和材质。"; status.classList.add("visible"); sendSize(); return; }
+          const missingCustom = Object.keys(languageLabels).find((id) => answer[id].includes("other") && !answer[customNames[id]]);
+          if (missingCustom) { status.textContent = `请填写“其他${languageLabels[missingCustom]}”。`; status.classList.add("visible"); sendSize(); return; }
+          const button = form.querySelector("button"); button.disabled = true; button.textContent = "正在提交…";
+          try { await sendMessage(readable(answer)); button.textContent = "已提交"; form.querySelectorAll("input,textarea").forEach((item) => item.disabled = true); }
+          catch (error) { button.disabled = false; button.textContent = "提交二创方向"; const status = document.querySelector("#status"); status.textContent = error.message; status.classList.add("visible"); }
+          sendSize();
+        });
+        function sendSize() { notify("ui/notifications/size-changed", { width: Math.ceil(window.innerWidth), height: Math.ceil(document.querySelector("main").getBoundingClientRect().height) }); }
+        async function connect() {
+          try { const result = await request("ui/initialize", { protocolVersion: APP_PROTOCOL, appInfo: { name: "svt-jewelry-remix-brief", version: "2.0.0" }, appCapabilities: { availableDisplayModes: ["inline"] } }); connected = true; hostCanMessage = Boolean(result?.hostCapabilities?.message?.text); notify("ui/notifications/initialized"); }
+          catch (_) { accept(window.openai?.toolInput); accept(window.openai?.toolOutput); }
+        }
+        new ResizeObserver(sendSize).observe(document.querySelector("main")); accept(window.openai?.toolInput); accept(window.openai?.toolOutput); connect();
+      })();
+    </script>
+  </body>
+</html>

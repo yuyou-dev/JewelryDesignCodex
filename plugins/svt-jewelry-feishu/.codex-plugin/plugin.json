@@ -1,0 +1,27 @@
+{
+  "name": "svt-jewelry-feishu",
+  "version": "0.1.0",
+  "description": "Optional Feishu delivery skill for JewelryDesignCodex.",
+  "author": {
+    "name": "苏哇科技",
+    "url": "https://github.com/yuyou-dev"
+  },
+  "homepage": "https://github.com/yuyou-dev/JewelryDesignCodex",
+  "repository": "https://github.com/yuyou-dev/JewelryDesignCodex",
+  "license": "Apache-2.0",
+  "keywords": ["codex", "jewelry", "feishu", "delivery"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "苏哇科技珠宝飞书交付",
+    "shortDescription": "Optional Feishu delivery for jewelry tasks.",
+    "longDescription": "Adds Feishu document delivery for completed JewelryDesignCodex tasks. Requires a separately installed lark-cli and the user's own Feishu authorization.",
+    "developerName": "苏哇科技",
+    "category": "Productivity",
+    "capabilities": ["Write"],
+    "websiteURL": "https://github.com/yuyou-dev/JewelryDesignCodex",
+    "brandColor": "#C8A35A",
+    "defaultPrompt": [
+      "将这次珠宝设计的已完成结果整理到飞书文档。"
+    ]
+  }
+}

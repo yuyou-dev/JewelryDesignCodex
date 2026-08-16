@@ -1,0 +1,6 @@
+interface:
+  display_name: "珠宝模特佩戴"
+  short_description: "拖放首饰到模特并生成真实佩戴效果"
+  default_prompt: "Use $jewelry-model-tryon to place this jewelry on the supplied model and generate one realistic wearing image."
+policy:
+  allow_implicit_invocation: true

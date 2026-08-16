@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>珠宝爆款二创</title>
+    <style>
+      :root { color-scheme: light dark; font-family: system-ui, -apple-system, "PingFang SC", sans-serif; }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; overflow-y: hidden; overscroll-behavior: none; }
+      body { background: transparent; color: var(--text, #171717); }
+      main { padding: 6px 8px 8px; overflow: hidden; }
+      header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 42px; margin-bottom: 8px; }
+      .heading { min-width: 0; }
+      h1 { margin: 0; font-size: 18px; line-height: 1.2; letter-spacing: -.015em; }
+      .caption { margin: 3px 0 0; overflow: hidden; color: #737373; font-size: 13px; line-height: 1.4; text-overflow: ellipsis; white-space: nowrap; }
+      .counter { font-size: 12px; font-weight: 720; letter-spacing: .06em; white-space: nowrap; }
+      .gallery-grid { position: relative; display: grid; grid-template-columns: 70px minmax(0, 650px) minmax(180px, 200px); gap: 12px; width: 100%; max-width: 944px; height: clamp(400px, 50vw, 560px); overflow: hidden; }
+      .gallery-grid.dense { grid-template-columns: 124px minmax(0, 650px) minmax(180px, 200px); max-width: 998px; }
+      .stage { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 10px; background: color-mix(in srgb, currentColor 4%, transparent); touch-action: pan-y; user-select: none; }
+      .stage:has(input[type="range"]:focus-visible) { outline: 2px solid currentColor; outline-offset: -2px; }
+      .stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+      .after { clip-path: inset(0 0 0 50%); }
+      .divider { position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: rgba(255,255,255,.95); box-shadow: 0 0 0 1px rgba(0,0,0,.18); pointer-events: none; }
+      .handle { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: rgba(20,20,20,.82); color: white; font-size: 12px; box-shadow: 0 5px 18px rgba(0,0,0,.22); }
+      .tag { position: absolute; top: 10px; z-index: 2; padding: 5px 8px; border-radius: 999px; color: white; background: rgba(20,20,20,.68); font-size: 12px; backdrop-filter: blur(8px); }
+      .tag.before { left: 8px; } .tag.after-tag { right: 8px; }
+      input[type="range"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; }
+      .thumbs { display: grid; grid-auto-rows: 68px; align-content: start; gap: 8px; min-height: 0; overflow: hidden; }
+      .thumbs.dense { grid-template-columns: repeat(2, 58px); grid-auto-rows: 58px; }
+      .thumb { position: relative; width: 68px; height: 68px; min-width: 44px; min-height: 44px; aspect-ratio: 1; padding: 0; overflow: hidden; border: 0; border-radius: 10px; background: transparent; color: inherit; cursor: pointer; }
+      .thumb img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 2px solid transparent; background: color-mix(in srgb, currentColor 4%, transparent); }
+      .thumbs.dense .thumb { width: 58px; height: 58px; }
+      .thumb.active img { border-color: #171717; }
+      .thumb:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
+      .thumb span { position: absolute; right: 5px; bottom: 5px; left: 5px; padding: 3px 4px; overflow: hidden; border-radius: 4px; background: rgba(20,20,20,.68); color: #fff; font-size: 10px; font-weight: 720; line-height: 1; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+      .details { display: flex; min-width: 0; flex-direction: column; padding: 10px 4px 4px 12px; border-left: 1px solid color-mix(in srgb, currentColor 12%, transparent); }
+      .details h2 { margin: 0 0 8px; font-size: 17px; line-height: 1.3; }
+      .details p { margin: 0; color: #737373; font-size: 13px; line-height: 1.5; }
+      .summary { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+      .use { display: -webkit-box; margin-top: 7px !important; overflow: hidden; font-weight: 650; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+      .actions { margin-top: auto; }
+      .select { width: 100%; min-height: 44px; border: 0; border-radius: 999px; padding: 10px 14px; background: #171717; color: #fff; font: inherit; font-size: 13px; font-weight: 720; cursor: pointer; white-space: nowrap; }
+      .select:disabled { opacity: .55; cursor: default; }
+      .select:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+      .loading, .error { display: grid; place-items: center; height: 400px; color: #737373; font-size: 13px; text-align: center; }
+      .loading picture, .loading img { display: block; width: 64px; height: 64px; margin: auto; }
+      .loading p, .error p { margin: 6px 0 0; }
+      [hidden] { display: none !important; }
+      .content { display: none; } .content.visible { display: block; }
+      .status { min-height: 16px; margin: 6px 2px 0; color: #737373; font-size: 11px; line-height: 1.35; text-align: center; }
+      @media (prefers-color-scheme: dark) { body { --text: #f5f5f5; } .thumb.active img { border-color: #f5f5f5; } }
+      @media (max-width: 720px) {
+        main { padding-inline: 4px; }
+        .gallery-grid { grid-template-columns: 62px minmax(0, 1fr) minmax(170px, 190px); gap: 8px; height: clamp(420px, 62vw, 500px); }
+        .gallery-grid.dense { grid-template-columns: 112px minmax(0, 1fr) minmax(170px, 190px); }
+        .thumbs { grid-auto-rows: 60px; gap: 7px; }
+        .thumbs.dense { grid-template-columns: repeat(2,52px); grid-auto-rows: 52px; }
+        .thumb { width: 60px; height: 60px; }
+        .thumbs.dense .thumb { width: 52px; height: 52px; }
+        .details { padding-left: 8px; }
+      }
+      @media (max-width: 520px) {
+        header { min-height: 36px; }
+        h1 { font-size: 16px; }
+        .caption { display: none !important; }
+        .gallery-grid { grid-template-columns: 62px minmax(0, 1fr); height: clamp(440px, 108vw, 500px); }
+        .gallery-grid.dense { grid-template-columns: 112px minmax(0, 1fr); }
+        .thumbs { grid-auto-rows: 60px; gap: 7px; }
+        .thumbs.dense { grid-template-columns: repeat(2,52px); grid-auto-rows: 52px; }
+        .thumb { width: 60px; height: 60px; }
+        .thumbs.dense .thumb { width: 52px; height: 52px; }
+        .details { position: absolute; right: 8px; bottom: 8px; width: min(220px, calc(100% - 80px)); max-height: 150px; padding: 10px; border: 0; border-radius: 10px; background: color-mix(in srgb, Canvas 90%, transparent); box-shadow: 0 4px 18px rgba(0,0,0,.12); backdrop-filter: blur(12px); }
+        .gallery-grid.dense .details { width: min(220px, calc(100% - 130px)); }
+        .details h2 { margin-bottom: 4px; font-size: 14px; }
+        .details p { font-size: 12px; }
+        .summary { -webkit-line-clamp: 1; }
+        .use { display: none; }
+        .select { min-height: 40px; margin-top: 6px; padding-block: 8px; font-size: 12px; }
+      }
+      @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation: none !important; transition: none !important; } }
+    </style>
+  </head>
+  <body>
+    <main data-brand="{{BRAND_NAME}}">
+      <div id="loading" class="loading"><div><picture><source media="(prefers-reduced-motion: reduce)" srcset="{{BRAND_STATIC_DATA_URI}}" /><img src="{{BRAND_HEADER_DATA_URI}}" alt="" /></picture><p>{{BRAND_NAME}} · 正在载入二创方案…</p></div></div>
+      <div id="error" class="error" role="status" hidden><div><strong>无法显示二创 Gallery</strong><p id="error-text"></p></div></div>
+      <div id="content" class="content">
+        <header>
+          <div class="heading"><h1 id="title">珠宝爆款二创</h1><p id="caption" class="caption"></p></div>
+          <span id="counter" class="counter"></span>
+        </header>
+        <div class="gallery-grid">
+          <nav id="thumbs" class="thumbs" aria-label="二创方案"></nav>
+          <div class="stage" id="stage">
+            <img id="source" alt="原款" />
+            <img id="candidate" class="after" alt="二创方案" />
+            <span class="tag before">原款</span><span class="tag after-tag">二创</span>
+            <div id="divider" class="divider"><span class="handle">↔</span></div>
+            <input id="slider" type="range" min="0" max="100" value="50" aria-label="拖动对比原款与二创方案" />
+          </div>
+          <section class="details">
+            <div><h2 id="candidate-title"></h2><p id="summary" class="summary"></p><p id="use-case" class="use"></p></div>
+            <div class="actions"><button id="select" class="select" type="button">选定此图继续</button><p id="status" class="status" aria-live="polite"></p></div>
+          </section>
+        </div>
+      </div>
+    </main>
+    <script>
+      (() => {
+        const APP_PROTOCOL = "2026-01-26";
+        const pending = new Map();
+        let requestId = 1;
+        let connected = false;
+        let hostCanMessage = false;
+        let hostCanUpdateContext = false;
+        let gallery = null;
+        let media = null;
+        let currentIndex = 0;
+        setTimeout(() => { if (document.querySelector("#loading").style.display !== "none") showError("等待二创 Gallery 超时，请在对话中重试。"); }, 15000);
+        const post = (message) => window.parent.postMessage(message, "*");
+        const request = (method, params, timeout = 5000) => new Promise((resolve, reject) => {
+          const id = requestId++;
+          const timer = setTimeout(() => { pending.delete(id); reject(new Error("宿主响应超时")); }, timeout);
+          pending.set(id, { resolve, reject, timer }); post({ jsonrpc: "2.0", id, method, params });
+        });
+        const notify = (method, params = {}) => post({ jsonrpc: "2.0", method, params });
+        window.addEventListener("message", (event) => {
+          if (event.source !== window.parent) return;
+          const message = event.data;
+          if (!message || message.jsonrpc !== "2.0") return;
+          if (message.id && pending.has(message.id)) { const item = pending.get(message.id); pending.delete(message.id); clearTimeout(item.timer); message.error ? item.reject(new Error(message.error.message)) : item.resolve(message.result); }
+          if (message.method === "ui/notifications/tool-input") accept(message.params?.arguments ?? message.params);
+          if (message.method === "ui/notifications/tool-result") accept(message.params, true);
+        });
+        function parse(value, depth = 0) {
+          if (depth > 2 || value == null) return value;
+          if (typeof value === "string") { try { return parse(JSON.parse(value), depth + 1); } catch (_) { return value; } }
+          if (Array.isArray(value)) return value.map((item) => parse(item, depth + 1));
+          if (typeof value === "object") {
+            if (value.isError) { const text = value.content?.find((item) => item?.type === "text")?.text; return { error: text || "工具未能准备二创 Gallery。" }; }
+            if (value.result) return parse(value.result, depth + 1);
+            const text = value.content?.length === 1 && value.content[0]?.type === "text" ? value.content[0].text : null;
+            if (text) { const candidate = parse(text, depth + 1); if (candidate !== text) return { ...value, ...candidate }; }
+          }
+          return value;
+        }
+        function showError(message) {
+          document.querySelector("#loading").style.display = "none"; document.querySelector("#content").classList.remove("visible"); document.querySelector("#error").hidden = false; document.querySelector("#error-text").textContent = message || "未收到可展示的二创结果。"; sendSize();
+        }
+        function accept(value, isResult = false) {
+          const data = parse(value);
+          if (!data || typeof data !== "object" || Array.isArray(data)) return;
+          if (data.error) { showError(data.error); return; }
+          gallery = data.structuredContent?.gallery || data.gallery || gallery;
+          media = data._meta?.galleryMedia || data.galleryMedia || media;
+          const complete = Array.isArray(gallery?.candidates) && gallery.candidates.length > 0 && media?.source && media?.candidates && gallery.candidates.every(item => media.candidates[item.id]);
+          if (complete) render(); else if (isResult) showError("未收到完整的原款、候选方案与预览数据。");
+        }
+        function setPosition(value) {
+          const position = Math.max(0, Math.min(100, Number(value) || 0));
+          document.querySelector("#candidate").style.clipPath = `inset(0 0 0 ${position}%)`;
+          document.querySelector("#divider").style.left = `${position}%`;
+          document.querySelector("#slider").value = String(position);
+        }
+        function show(index) {
+          currentIndex = (index + gallery.candidates.length) % gallery.candidates.length;
+          const item = gallery.candidates[currentIndex];
+          document.querySelector("#candidate").src = media.candidates[item.id];
+          document.querySelector("#candidate-title").textContent = `${item.id} · ${item.title}`;
+          document.querySelector("#summary").textContent = item.summary || "";
+          document.querySelector("#use-case").textContent = item.useCase ? `适用：${item.useCase}` : "";
+          document.querySelector("#counter").textContent = `${currentIndex + 1} / ${gallery.candidates.length}`;
+          document.querySelectorAll(".thumb").forEach((button, buttonIndex) => {
+            const active = buttonIndex === currentIndex;
+            button.classList.toggle("active", active);
+            button.setAttribute("aria-current", active ? "true" : "false");
+          });
+          setPosition(gallery.initialPosition ?? 50);
+        }
+        function render() {
+          document.querySelector("#title").textContent = gallery.title || "珠宝爆款二创";
+          const caption = document.querySelector("#caption"); caption.textContent = gallery.caption || "每款都与同一原款对比"; caption.style.display = caption.textContent ? "block" : "none";
+          document.querySelector("#source").src = media.source;
+          const thumbs = document.querySelector("#thumbs"); const grid = document.querySelector(".gallery-grid"); const dense = gallery.candidates.length > 5; grid.classList.toggle("dense", dense); thumbs.classList.toggle("dense", dense); thumbs.replaceChildren(); thumbs.style.setProperty("--candidate-count", gallery.candidates.length);
+          gallery.candidates.forEach((item, index) => {
+            const button = document.createElement("button"); button.type = "button"; button.className = "thumb"; button.setAttribute("aria-label", `查看 ${item.id} ${item.title}`);
+            const image = document.createElement("img"); image.src = media.candidates[item.id]; image.alt = item.title;
+            const label = document.createElement("span"); label.textContent = item.id.replace("REMIX-", ""); button.title = `${item.id} · ${item.title}`;
+            button.append(image, label); button.addEventListener("click", () => show(index)); thumbs.append(button);
+          });
+          const initial = Math.max(0, gallery.candidates.findIndex((item) => item.id === gallery.initialCandidateId));
+          show(initial); document.querySelector("#loading").style.display = "none"; document.querySelector("#error").hidden = true; document.querySelector("#content").classList.add("visible"); sendSize();
+        }
+        async function sendMessage(text) {
+          if (connected && hostCanMessage) { try { await request("ui/message", { role: "user", content: [{ type: "text", text }] }, 8000); return; } catch (_) {} }
+          if (window.openai?.sendFollowUpMessage) { await window.openai.sendFollowUpMessage({ prompt: text, scrollToBottom: false }); return; }
+          throw new Error("当前宿主不支持方案回写");
+        }
+        function selectionText(context) {
+          return `已选中珠宝视觉资产 ${context.assetId}。等待用户下一条任务指令；不要预设精修、二创、海报、画册、展示、视频或其他工作流。\n\nCurrent jewelry asset selection (JSON):\n${JSON.stringify(context)}`;
+        }
+        async function recordSelection(context) {
+          const text = selectionText(context);
+          if (connected && hostCanUpdateContext) {
+            try { await request("ui/update-model-context", { content: [{ type: "text", text }], structuredContent: { jewelryAssetSelection: context } }, 8000); return "context"; }
+            catch (_) {}
+          }
+          await sendMessage(text); return "message";
+        }
+        document.querySelector("#slider").addEventListener("input", (event) => setPosition(event.target.value));
+        document.querySelector("#select").addEventListener("click", async (event) => {
+          const item = gallery.candidates[currentIndex]; const button = event.currentTarget; button.disabled = true; button.textContent = "正在记录…";
+          const context = { assetId: item.id, sourceWorkflow: "remix" };
+          try { const mode = await recordSelection(context); button.textContent = "已选中"; document.querySelector("#status").textContent = mode === "context" ? "已选中，请在输入框说明下一步。" : "已回写对话，请继续说明下一步。"; }
+          catch (error) { button.disabled = false; button.textContent = "选定此图继续"; document.querySelector("#status").textContent = error.message; }
+          sendSize();
+        });
+        document.addEventListener("keydown", (event) => { if (!gallery || event.target === document.querySelector("#slider")) return; if (event.key === "ArrowLeft") show(currentIndex - 1); if (event.key === "ArrowRight") show(currentIndex + 1); });
+        function sendSize() { notify("ui/notifications/size-changed", { width: Math.ceil(window.innerWidth), height: Math.ceil(document.querySelector("main").getBoundingClientRect().height) }); }
+        async function connect() {
+          try { const result = await request("ui/initialize", { protocolVersion: APP_PROTOCOL, appInfo: { name: "svt-jewelry-remix-gallery", version: "1.1.0" }, appCapabilities: { availableDisplayModes: ["inline", "fullscreen"] } }); connected = true; hostCanMessage = Boolean(result?.hostCapabilities?.message?.text); hostCanUpdateContext = Boolean(result?.hostCapabilities?.updateModelContext); notify("ui/notifications/initialized"); }
+          catch (_) { accept(window.openai?.toolInput); accept(window.openai?.toolOutput, true); }
+        }
+        new ResizeObserver(sendSize).observe(document.querySelector("main")); accept(window.openai?.toolInput); accept(window.openai?.toolOutput, true); connect();
+      })();
+    </script>
+  </body>
+</html>

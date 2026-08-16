@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>珠宝视觉创作方向</title>
+    <style>
+      :root { color-scheme:light dark; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; --fg:#191919; --muted:#707070; --line:rgba(127,127,127,.24); --surface:rgba(127,127,127,.07); --accent:#a77d2d; }
+      * { box-sizing:border-box; }
+      html,body { margin:0; overflow-x:hidden; overflow-y:hidden; overscroll-behavior:none; background:transparent; color:var(--fg); }
+      body { padding:7px 9px 9px; }
+      main { width:100%; max-width:980px; min-width:0; }
+      h1 { margin:0; font-size:19px; line-height:1.25; }
+      .lead { margin:5px 0 11px; color:var(--muted); font-size:13px; line-height:1.45; }
+      .workflow { display:inline-flex; align-items:center; min-height:26px; margin-bottom:8px; padding:4px 9px; border:1px solid color-mix(in srgb,var(--accent) 45%,transparent); border-radius:999px; color:var(--accent); font-size:11px; font-weight:700; letter-spacing:.04em; }
+      .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 12px; }
+      fieldset { min-width:0; margin:0; padding:0; border:0; }
+      legend,.label { display:block; margin:0 0 6px; padding:0; font-size:13px; font-weight:680; }
+      .options { display:flex; flex-wrap:wrap; gap:5px; }
+      .choice { position:relative; min-width:0; }
+      .choice input { position:absolute; opacity:0; pointer-events:none; }
+      .choice span { display:block; min-height:36px; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--surface); font-size:12px; line-height:1.45; cursor:pointer; }
+      .choice input:checked + span { border-color:#171717; background:#171717; color:#fff; }
+      .choice input:focus-visible + span,textarea:focus-visible,button:focus-visible { outline:3px solid color-mix(in srgb,var(--accent) 48%,transparent); outline-offset:2px; }
+      .direction { grid-column:1/-1; }
+      textarea { width:100%; height:64px; resize:none; padding:9px 10px; border:1px solid var(--line); border-radius:8px; background:transparent; color:inherit; font:inherit; font-size:12px; line-height:1.45; }
+      .footer { display:flex; align-items:center; gap:10px; margin-top:10px; padding-top:9px; border-top:1px solid var(--line); }
+      .hint,.status { color:var(--muted); font-size:11px; line-height:1.4; }
+      .hint { margin-right:auto; }
+      button { min-height:44px; padding:10px 18px; border:0; border-radius:999px; background:#171717; color:#fff; font:inherit; font-size:13px; font-weight:720; cursor:pointer; }
+      button:disabled { opacity:.55; cursor:default; }
+      .loading,.error { min-height:250px; display:grid; place-items:center; color:var(--muted); font-size:12px; text-align:center; }
+      .loading picture,.loading img { display:block; width:58px; height:58px; margin:auto; }
+      .loading p,.error p { margin:6px 0 0; }
+      [hidden] { display:none !important; }
+      @media (max-width:520px) { body{padding-inline:4px}.form-grid{gap:8px}.choice span{padding:6px 7px}.hint{display:none} }
+      @media (max-width:360px) { .form-grid{grid-template-columns:1fr}.direction{grid-column:auto}.footer{align-items:flex-end}.footer button{width:100%} }
+      @media (prefers-color-scheme:dark) { :root{--fg:#f3f3f3;--muted:#aaa;--accent:#d2ad64} }
+      @media (prefers-reduced-motion:reduce) { *,*::before,*::after{animation:none!important;transition:none!important} }
+    </style>
+  </head>
+  <body>
+    <main data-brand="{{BRAND_NAME}}">
+      <section id="loading" class="loading"><div><picture><source media="(prefers-reduced-motion: reduce)" srcset="{{BRAND_STATIC_DATA_URI}}" /><img src="{{BRAND_HEADER_DATA_URI}}" alt="" /></picture><p>{{BRAND_NAME}} · 正在准备创作表单…</p></div></section>
+      <section id="error" class="error" role="status" hidden><div><strong>无法显示创作表单</strong><p id="error-text"></p></div></section>
+      <section id="content" hidden>
+        <span id="workflow" class="workflow"></span><h1 id="title"></h1><p id="prompt" class="lead"></p>
+        <form id="form"><div id="fields" class="form-grid"></div><div class="footer"><span class="hint">原图通过对话附件提供；这里仅确认创作方向。</span><span id="status" class="status" aria-live="polite"></span><button type="submit">提交创作方向</button></div></form>
+      </section>
+    </main>
+    <script>
+      (()=>{
+        const APP_PROTOCOL="2026-01-26";let requestId=0,connected=false,hostCanMessage=false,active=null;const pending=new Map();
+        setTimeout(()=>{if(!document.querySelector("#loading").hidden)showError("等待创作表单超时，请在对话中重试。")},15000);
+        const CONFIG={
+          poster:{label:"珠宝海报",fields:[{id:"mode",label:"海报模板",options:[["editorial_board","编辑式画板"],["ecommerce_hero","电商主视觉"],["minimal_gallery","极简画廊"],["seasonal_campaign","节日礼赠"]]},{id:"aspectRatio",label:"画幅",options:[["3:4","竖版 3:4"],["9:16","竖屏 9:16"],["16:9","横版 16:9"],["1:1","方形 1:1"]]},{id:"composition",label:"构图重心",options:[["product_led","产品主导"],["model_detail","模特局部"],["art_scene","艺术场景"]]},{id:"typography",label:"文字策略",options:[["minimal","极少文字"],["editorial","编辑式层级"],["none","纯视觉"]]}]},
+          catalog:{label:"珠宝画册",fields:[{id:"mode",label:"画册档位",options:[["core_five","核心五图"],["expanded_seven","扩展七图"]]},{id:"channel",label:"使用渠道",options:[["pdp","商品详情页"],["marketplace","电商平台"],["lookbook","品牌 Lookbook"]]},{id:"background",label:"统一背景",options:[["clean_light","清透浅色"],["warm_neutral","暖中性色"],["dark_luxury","深色奢华"]]},{id:"style",label:"整体语言",options:[["consistent_commerce","一致电商"],["luxury_editorial","高级编辑"],["quiet_gallery","安静画廊"]]}]},
+          display:{label:"珠宝展示",fields:[{id:"mode",label:"展示模式",options:[["white_gallery_product","白色画廊"],["editorial_still_life","编辑静物"],["hand_wearing_product_macro","佩戴特写"],["craft_macro","工艺微距"]]},{id:"aspectRatio",label:"画幅",options:[["1:1","方形 1:1"],["3:4","竖版 3:4"],["4:3","横版 4:3"]]},{id:"sceneIntensity",label:"场景强度",options:[["quiet","克制留白"],["balanced","平衡场景"],["expressive","强调氛围"]]},{id:"background",label:"背景方向",options:[["quiet_neutral","安静中性"],["botanical","植物支撑"],["sculptural","雕塑陈列"]]}]},
+        };
+        const notify=(method,params={})=>window.parent.postMessage({jsonrpc:"2.0",method,params},"*");const request=(method,params={},timeout=6000)=>new Promise((resolve,reject)=>{const id=++requestId,timer=setTimeout(()=>{pending.delete(id);reject(new Error("host timeout"));},timeout);pending.set(id,{resolve,reject,timer});window.parent.postMessage({jsonrpc:"2.0",id,method,params},"*");});
+        window.addEventListener("message",event=>{if(event.source!==window.parent)return;const message=event.data;if(!message||message.jsonrpc!=="2.0")return;if(message.id&&pending.has(message.id)){const item=pending.get(message.id);pending.delete(message.id);clearTimeout(item.timer);message.error?item.reject(new Error(message.error.message)):item.resolve(message.result);}if(message.method==="ui/notifications/tool-input")accept(message.params?.arguments??message.params);if(message.method==="ui/notifications/tool-result")accept(message.params,true);});
+        function parse(value,depth=0){if(depth>2||value==null)return value;if(typeof value==="string"){try{return parse(JSON.parse(value),depth+1)}catch{return value}}if(typeof value!=="object")return value;if(value.isError){const text=value.content?.find(item=>item?.type==="text")?.text;return{error:text||"工具未能准备创作表单。"}}if(value.structuredContent?.creationBrief)return value.structuredContent.creationBrief;if(value.creationBrief)return value.creationBrief;if(value.result)return parse(value.result,depth+1);const text=value.content?.length===1&&value.content[0]?.type==="text"?value.content[0].text:null;if(text){const candidate=parse(text,depth+1);if(candidate!==text)return candidate}if(value.workflow)return{...value.defaults,...value};return value}
+        function showError(message){document.querySelector("#loading").hidden=true;document.querySelector("#content").hidden=true;document.querySelector("#error").hidden=false;document.querySelector("#error-text").textContent=message||"未收到可显示的表单数据。";sendSize()}
+        function accept(value,isResult=false){const data=parse(value);if(data?.error){showError(data.error);return}if(!data||!CONFIG[data.workflow]){if(isResult)showError("未收到完整的创作表单数据。");return}active=data;render()}
+        function visibleFields(){const config=CONFIG[active.workflow],requested=Array.isArray(active.unresolvedFields)?active.unresolvedFields:null;return requested?config.fields.filter(field=>requested.includes(field.id)):config.fields}
+        function render(){const config=CONFIG[active.workflow];document.querySelector("#loading").hidden=true;document.querySelector("#error").hidden=true;document.querySelector("#content").hidden=false;document.querySelector("#workflow").textContent=config.label;document.querySelector("#title").textContent=active.title||`确认${config.label}方向`;document.querySelector("#prompt").textContent=active.prompt||"只确认会改变整个创作方向的选择。";const fields=visibleFields().map(field=>{const set=document.createElement("fieldset"),legend=document.createElement("legend"),options=document.createElement("div");legend.textContent=field.label;options.className="options";for(const[id,label]of field.options){const choice=document.createElement("label"),input=document.createElement("input"),span=document.createElement("span");choice.className="choice";input.type="radio";input.name=field.id;input.value=id;input.checked=String(active[field.id])===id;span.textContent=label;choice.append(input,span);options.append(choice)}set.append(legend,options);return set});const direction=document.createElement("label");direction.className="direction";direction.innerHTML='<span class="label">补充方向（可选）</span><textarea name="direction" placeholder="例如：更克制、面向节日礼赠、强调主石火彩"></textarea>';direction.querySelector("textarea").value=active.direction||"";fields.push(direction);document.querySelector("#fields").replaceChildren(...fields);sendSize()}
+        function collect(){const data=new FormData(document.querySelector("#form")),answer={workflow:active.workflow,formId:active.formId};for(const field of visibleFields())answer[field.id]=String(data.get(field.id)||"");answer.direction=String(data.get("direction")||"").trim();return answer}
+        function readable(answer){const config=CONFIG[answer.workflow],fields=visibleFields(),labels=Object.fromEntries(fields.flatMap(field=>field.options.map(([id,label])=>[`${field.id}:${id}`,label]))),lines=fields.map(field=>`- ${field.label}：${labels[`${field.id}:${answer[field.id]}`]||answer[field.id]}`);if(answer.direction)lines.push(`- 补充方向：${answer.direction}`);return `已提交${config.label}创作方向：\n${lines.join("\n")}\n\nCurrent jewelry creation brief (JSON):\n${JSON.stringify(answer)}`}
+        async function sendMessage(text){if(connected&&hostCanMessage){try{await request("ui/message",{role:"user",content:[{type:"text",text}]},8000);return}catch{}}if(window.openai?.sendFollowUpMessage){await window.openai.sendFollowUpMessage({prompt:text});return}throw new Error("当前宿主不支持表单回写")}
+        document.querySelector("#form").addEventListener("submit",async event=>{event.preventDefault();const form=event.currentTarget,answer=collect(),button=form.querySelector("button"),status=document.querySelector("#status");if(visibleFields().some(field=>!answer[field.id])){status.textContent="请完成所有创作方向选项。";sendSize();return}button.disabled=true;button.textContent="正在提交…";try{await sendMessage(readable(answer));button.textContent="已提交";form.querySelectorAll("input,textarea").forEach(input=>input.disabled=true)}catch(error){button.disabled=false;button.textContent="提交创作方向";status.textContent=error.message}sendSize()});
+        function sendSize(){notify("ui/notifications/size-changed",{width:Math.ceil(window.innerWidth),height:Math.ceil(document.querySelector("main").getBoundingClientRect().height)})}new ResizeObserver(sendSize).observe(document.querySelector("main"));
+        async function connect(){try{const result=await request("ui/initialize",{protocolVersion:APP_PROTOCOL,appInfo:{name:"suwa-jewelry-creation-brief",version:"1.0.0"},appCapabilities:{availableDisplayModes:["inline"]}});connected=true;hostCanMessage=Boolean(result?.hostCapabilities?.message?.text);notify("ui/notifications/initialized")}catch{accept(window.openai?.toolInput);accept(window.openai?.toolOutput,true)}}accept(window.openai?.toolInput);accept(window.openai?.toolOutput,true);connect();
+      })();
+    </script>
+  </body>
+</html>

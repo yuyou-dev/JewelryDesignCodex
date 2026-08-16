@@ -1,0 +1,6 @@
+interface:
+  display_name: "Jewelry Retouch"
+  short_description: "Clean jewelry photos while preserving product."
+  default_prompt: "Use $jewelry-retouch to polish this jewelry image while preserving the exact product design."
+policy:
+  allow_implicit_invocation: true

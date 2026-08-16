@@ -1,0 +1,6 @@
+interface:
+  display_name: "珠宝局部重绘"
+  short_description: "通过画布标注、定点放置或随手画生成可制造珠宝图"
+  default_prompt: "Use $jewelry-local-edit to turn this local jewelry change or sketch into one controlled Image-2 result."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,29 @@
+JewelryDesignCodex
+Copyright 2026 苏哇科技 (SVT)
+
+This product includes software developed by 苏哇科技 and contributors to the
+JewelryDesignCodex project.
+
+The 苏哇科技 name, SVT brand identity, and included SVT logo artwork are not
+licensed for independent trademark use under the Apache License 2.0. See
+TRADEMARKS.md.
+
+The core runtime is built on standard Node.js and Python interfaces and uses the
+user's separately installed Codex Desktop and Codex CLI. Those products are not
+redistributed by this repository.
+
+This product bundles jpeg-js 0.4.4, Copyright (c) 2014 Eugene Ware, under the
+BSD 3-Clause License. Its encoder includes work Copyright (c) 2008 Adobe
+Systems Incorporated under the BSD 3-Clause License. Its decoder includes work
+Copyright 2011 notmasteryet under the Apache License 2.0. The complete notices
+and license terms are retained in:
+
+  plugins/svt-jewelry-design/mcp/vendor/jpeg-js/LICENSE
+  plugins/svt-jewelry-design/mcp/vendor/jpeg-js/lib/encoder.js
+  plugins/svt-jewelry-design/mcp/vendor/jpeg-js/lib/decoder.js
+
+Other third-party source or binary material, when present under a vendored
+directory, retains its original copyright and license notice in that directory.
+Release packaging and continuous integration verify that every such component
+has an accompanying notice. No Codex credentials, OpenAI API keys, Feishu
+credentials, or provider account material are included in this distribution.

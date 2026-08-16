@@ -1,0 +1,6 @@
+interface:
+  display_name: "Jewelry Reference Sheet"
+  short_description: "Plan consistent multi-view jewelry references."
+  default_prompt: "Use $jewelry-reference-sheet to create a multi-view reference plan for this jewelry."
+policy:
+  allow_implicit_invocation: true

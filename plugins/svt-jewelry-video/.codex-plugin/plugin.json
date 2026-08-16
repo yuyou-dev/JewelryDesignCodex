@@ -1,0 +1,27 @@
+{
+  "name": "svt-jewelry-video",
+  "version": "0.1.0",
+  "description": "Optional reference-first jewelry video planning and Dreamina submission skills for JewelryDesignCodex.",
+  "author": {
+    "name": "苏哇科技",
+    "url": "https://github.com/yuyou-dev"
+  },
+  "homepage": "https://github.com/yuyou-dev/JewelryDesignCodex",
+  "repository": "https://github.com/yuyou-dev/JewelryDesignCodex",
+  "license": "Apache-2.0",
+  "keywords": ["codex", "jewelry-video", "dreamina", "seedance"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "苏哇科技珠宝视频",
+    "shortDescription": "Optional reference-first jewelry video workflows.",
+    "longDescription": "Adds reference-first jewelry video prompt planning and Dreamina Seedance submission. Requires a separately installed Dreamina CLI and the user's own authorization.",
+    "developerName": "苏哇科技",
+    "category": "Productivity",
+    "capabilities": ["Write"],
+    "websiteURL": "https://github.com/yuyou-dev/JewelryDesignCodex",
+    "brandColor": "#C8A35A",
+    "defaultPrompt": [
+      "基于这张珠宝图规划一段参考图驱动的短片。"
+    ]
+  }
+}

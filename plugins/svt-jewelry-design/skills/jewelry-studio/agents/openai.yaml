@@ -1,0 +1,6 @@
+interface:
+  display_name: "Jewelry Studio"
+  short_description: "Natural jewelry design and image workflow."
+  default_prompt: "Use $jewelry-studio to design a professional jewelry concept from my natural-language brief and generate an image when appropriate."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,28 @@
+{
+  "product_name": "Lapis, platinum, and white jade architectural ring",
+  "category": "ring",
+  "materials": [
+    "mirror-polished platinum",
+    "opaque deep ultramarine lapis lazuli with fine natural gold pyrite specks",
+    "milky white jade with soft edge translucency"
+  ],
+  "gemstones": [
+    "lapis lazuli cabochon",
+    "carved white jade panels",
+    "small white diamond accents"
+  ],
+  "construction": "closed platinum shank with raised gallery, bezel-set lapis center, carved white jade shoulders, small diamond accents seated in platinum micro bezels",
+  "design": "high-jewelry ring with calm architectural symmetry, cool white metal, deep blue stone focus, and polished carved jade contrast",
+  "product_truth": "the lapis is opaque and stone-like, the white jade is softly translucent not plastic, the platinum shank is closed and structurally plausible, all settings visibly support the stones",
+  "scale": "wearable cocktail ring scale, ring face clearly larger than the shank but not oversized fantasy",
+  "constraints": [
+    "main lapis face must remain unobscured",
+    "white jade shoulders must remain visible",
+    "ring shank closure must be plausible"
+  ],
+  "forbidden": [
+    "transparent blue sapphire instead of lapis",
+    "plastic jade",
+    "open broken ring shank"
+  ]
+}

@@ -1,0 +1,7 @@
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+plugins/svt-jewelry-design/mcp/vendor/jpeg-js/** whitespace=-trailing-space,-space-before-tab
