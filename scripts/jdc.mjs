@@ -8,9 +8,14 @@ import { resolveCodex, resolveExecutable, resolvePython } from "../plugins/svt-j
 
 const MARKETPLACE = "jewelry-design-codex";
 const MARKETPLACE_SOURCE = "yuyou-dev/JewelryDesignCodex";
-const MARKETPLACE_REF = "v0.1.1";
+const MARKETPLACE_REF = "v0.2.0";
+const TARGET_VERSION = "0.2.0";
 const PLUGIN = "svt-jewelry-design";
 const PLUGIN_ID = `${PLUGIN}@${MARKETPLACE}`;
+const OPTIONAL_PLUGIN_IDS = [
+  `svt-jewelry-video@${MARKETPLACE}`,
+  `svt-jewelry-feishu@${MARKETPLACE}`,
+];
 const MCP = "svt_jewelry_ui";
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -152,6 +157,32 @@ function runAction(codex, item, dryRun) {
   if (!dryRun) execute(codex, [...item.args, "--json"], { json: true });
 }
 
+function versionOf(entry) {
+  return typeof entry?.version === "string" && entry.version ? entry.version : null;
+}
+
+function enabledOfficialPlugins(payload) {
+  const allowed = new Set([PLUGIN_ID, ...OPTIONAL_PLUGIN_IDS]);
+  return installedEntries(payload)
+    .filter(({ pluginId, installed, enabled }) => allowed.has(pluginId) && installed !== false && enabled !== false)
+    .map(({ pluginId }) => pluginId);
+}
+
+function updateResult(overrides = {}) {
+  return {
+    command: "update",
+    status: "blocked",
+    dryRun: false,
+    fromVersion: null,
+    toVersion: TARGET_VERSION,
+    migration: "fixed-release-ref",
+    restoredPlugins: [],
+    rolledBack: false,
+    actions: [],
+    ...overrides,
+  };
+}
+
 async function doctor(options) {
   const checks = await runtimeChecks();
   if (!checksReady(checks)) return { command: "doctor", status: "blocked", offline: options.offline, checks, actions: [] };
@@ -239,28 +270,83 @@ async function bootstrap(options) {
 
 async function update(options) {
   const planned = [
-    action("upgrade marketplace", ["plugin", "marketplace", "upgrade", MARKETPLACE]),
-    action("refresh plugin", ["plugin", "add", PLUGIN_ID]),
+    action("remove old fixed-ref marketplace", ["plugin", "marketplace", "remove", MARKETPLACE]),
+    action("add v0.2.0 marketplace", ["plugin", "marketplace", "add", MARKETPLACE_SOURCE, "--ref", MARKETPLACE_REF]),
+    action("restore core plugin", ["plugin", "add", PLUGIN_ID]),
   ];
-  if (options.dryRun) return { command: "update", status: "restart_required", dryRun: true, actions: planned };
+  if (options.dryRun) return updateResult({ status: "restart_required", dryRun: true, actions: planned });
   const codex = await resolveCodex();
-  if (!codex) return { command: "update", status: "blocked", dryRun: false, actions: [], reason: "Codex CLI was not found" };
+  if (!codex) return updateResult({ reason: "Codex CLI was not found" });
   const before = await inspectCodex(codex);
   const conflict = conflictReason(before);
-  if (conflict) return { command: "update", status: "blocked", dryRun: false, actions: [], reason: conflict };
-  if (!marketplaceEntry(before.marketplaces)) return { command: "update", status: "blocked", dryRun: false, actions: [], reason: "run bootstrap before update" };
-  runAction(codex, planned[0], false);
-  const available = execute(codex, ["plugin", "list", "--marketplace", MARKETPLACE, "--available", "--json"], { json: true });
-  const installed = pluginEntry(available);
-  const candidate = (available.available || []).find(({ name }) => name === PLUGIN);
-  const actions = [planned[0]];
-  if (!installed || (candidate?.version && candidate.version !== installed.version)) {
-    // Codex installs the new cache entry before switching the enabled plugin. Never remove the
-    // working version first: a failed refresh must leave the previous installation available.
-    runAction(codex, planned[1], false);
-    actions.push(planned[1]);
+  if (conflict) return updateResult({ reason: conflict });
+  if (!marketplaceEntry(before.marketplaces)) return updateResult({ reason: "JewelryDesignCodex is not installed; follow INSTALL.md first" });
+  const current = pluginEntry(before.plugins, PLUGIN_ID, { includeDisabled: true });
+  const fromVersion = versionOf(current);
+  if (!current) return updateResult({ fromVersion, reason: "the core plugin is not installed; follow INSTALL.md first" });
+  const restoreIds = enabledOfficialPlugins(before.plugins);
+  if (!restoreIds.includes(PLUGIN_ID)) restoreIds.unshift(PLUGIN_ID);
+
+  if (fromVersion === TARGET_VERSION && current.enabled !== false) {
+    const refresh = action("verify v0.2.0 marketplace", ["plugin", "marketplace", "upgrade", MARKETPLACE]);
+    runAction(codex, refresh, false);
+    const actions = [refresh];
+    let after = await inspectCodex(codex);
+    for (const id of restoreIds) {
+      const entry = pluginEntry(after.plugins, id);
+      if (entry && versionOf(entry) === TARGET_VERSION) continue;
+      const restore = action(`refresh ${id}`, ["plugin", "add", id]);
+      runAction(codex, restore, false); actions.push(restore);
+      after = await inspectCodex(codex);
+    }
+    const installed = pluginEntry(after.plugins);
+    return updateResult({
+      status: !(installed && versionOf(installed) === TARGET_VERSION) ? "blocked" : actions.length > 1 ? "restart_required" : "ready",
+      fromVersion,
+      migration: "already-current",
+      restoredPlugins: restoreIds,
+      actions,
+      ...(!(installed && versionOf(installed) === TARGET_VERSION) ? { reason: "v0.2.0 verification failed" } : {}),
+    });
   }
-  return { command: "update", status: actions.length > 1 ? "restart_required" : "ready", dryRun: false, actions };
+
+  const oldRef = fromVersion ? `v${fromVersion}` : null;
+  const actions = [];
+  let removedOld = false;
+  try {
+    runAction(codex, planned[0], false); actions.push(planned[0]); removedOld = true;
+    runAction(codex, planned[1], false); actions.push(planned[1]);
+    for (const id of restoreIds) {
+      const item = action(`restore ${id}`, ["plugin", "add", id]);
+      runAction(codex, item, false); actions.push(item);
+    }
+    const after = await inspectCodex(codex);
+    const installed = pluginEntry(after.plugins);
+    if (!installed || versionOf(installed) !== TARGET_VERSION) throw new Error("target plugin version verification failed");
+    return updateResult({ status: "restart_required", fromVersion, restoredPlugins: restoreIds, actions });
+  } catch (error) {
+    let rolledBack = false;
+    if (removedOld && oldRef) {
+      try {
+        const configured = marketplaceEntry((await inspectCodex(codex)).marketplaces);
+        if (configured) {
+          const removePartial = action("remove incomplete target marketplace", ["plugin", "marketplace", "remove", MARKETPLACE]);
+          runAction(codex, removePartial, false); actions.push(removePartial);
+        }
+        const restoreMarket = action(`restore ${oldRef} marketplace`, ["plugin", "marketplace", "add", MARKETPLACE_SOURCE, "--ref", oldRef]);
+        runAction(codex, restoreMarket, false); actions.push(restoreMarket);
+        for (const id of restoreIds) {
+          const restore = action(`restore previous ${id}`, ["plugin", "add", id]);
+          runAction(codex, restore, false); actions.push(restore);
+        }
+        const rolledState = await inspectCodex(codex);
+        rolledBack = versionOf(pluginEntry(rolledState.plugins, PLUGIN_ID, { includeDisabled: true })) === fromVersion;
+      } catch {
+        rolledBack = false;
+      }
+    }
+    return updateResult({ fromVersion, restoredPlugins: restoreIds, rolledBack, actions, reason: error.message });
+  }
 }
 
 async function uninstall(options) {

@@ -40,6 +40,11 @@ test("ships the routed Apps UI design contract", async () => {
   assert.match(grill, /Every Grill Me question round/);
   assert.match(grill, /discover `ask_jewelry_followup_questions`/);
   assert.match(grill, /before any prose fallback/);
+  assert.match(grill, /four discovery stages before confirmation/);
+  assert.match(grill, /delivery_count/);
+  assert.match(grill, /at least three visible axes/);
+  assert.match(conversation, /Complete four discovery rounds/);
+  assert.match(conversation, /visibly separated candidate branches/);
   assert.match(design, /No nested vertical scrolling/);
   assert.match(design, /touch-action: pan-y/);
   assert.match(design, /vertical\s+candidate rail/);

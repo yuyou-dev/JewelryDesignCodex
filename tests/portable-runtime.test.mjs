@@ -74,7 +74,7 @@ if (args.includes("plugin marketplace list")) {
   process.stdout.write(JSON.stringify({marketplaces:[{name:"jewelry-design-codex",marketplaceSource:{sourceType:"git",source}}]}));
 } else if (args.includes("plugin list")) {
   const installed = ["installed", "disabled"].includes(mode)
-    ? [{pluginId:"svt-jewelry-design@jewelry-design-codex",name:"svt-jewelry-design",marketplaceName:"jewelry-design-codex",version:"0.1.1",installed:true,enabled:mode !== "disabled"}]
+    ? [{pluginId:"svt-jewelry-design@jewelry-design-codex",name:"svt-jewelry-design",marketplaceName:"jewelry-design-codex",version:"0.2.0",installed:true,enabled:mode !== "disabled"}]
     : [];
   process.stdout.write(JSON.stringify({installed,available:[]}));
 } else if (args.includes("mcp get")) {
@@ -94,10 +94,10 @@ if (args.includes("plugin marketplace list")) {
   return wrapper;
 }
 
-function statefulFakeCodex(directory) {
+function statefulFakeCodex(directory, initial = {}) {
   const implementation = join(directory, "stateful-codex.mjs");
   const statePath = join(directory, "state.json");
-  writeFileSync(statePath, JSON.stringify({ marketplace: false, installed: false, version: "0.1.1", available: "0.1.1" }));
+  writeFileSync(statePath, JSON.stringify({ marketplace: false, ref: null, plugins: {}, ...initial }));
   writeFileSync(implementation, `
 import { readFileSync, writeFileSync } from "node:fs";
 const statePath = ${JSON.stringify(statePath)};
@@ -105,31 +105,38 @@ const state = JSON.parse(readFileSync(statePath, "utf8"));
 const args = process.argv.slice(2);
 const command = args.join(" ");
 const save = () => writeFileSync(statePath, JSON.stringify(state));
+const versionForRef = (ref) => String(ref || "").replace(/^v/, "") || "0.2.0";
 const marketplace = () => state.marketplace
   ? [{name:"jewelry-design-codex",marketplaceSource:{sourceType:"git",source:"https://github.com/yuyou-dev/JewelryDesignCodex.git"}}]
   : [];
-const installed = () => state.installed
-  ? [{pluginId:"svt-jewelry-design@jewelry-design-codex",name:"svt-jewelry-design",marketplaceName:"jewelry-design-codex",version:state.version,installed:true,enabled:true}]
-  : [];
+const installed = () => Object.entries(state.plugins).map(([pluginId, value]) => ({
+  pluginId, name:pluginId.split("@")[0], marketplaceName:"jewelry-design-codex",
+  version:value.version, installed:true, enabled:value.enabled !== false,
+}));
 if (command.startsWith("login status")) {
   process.stdout.write("Logged in");
 } else if (command.startsWith("plugin marketplace list")) {
   process.stdout.write(JSON.stringify({marketplaces:marketplace()}));
 } else if (command.startsWith("plugin marketplace add")) {
+  const index=args.indexOf("--ref"); state.ref=index>=0?args[index+1]:"v0.2.0";
   state.marketplace = true; save(); process.stdout.write("{}");
+} else if (command.startsWith("plugin marketplace remove")) {
+  state.marketplace = false; state.plugins = {}; save(); process.stdout.write("{}");
 } else if (command.startsWith("plugin marketplace upgrade")) {
-  state.available = "0.2.0"; save(); process.stdout.write("{}");
+  process.stdout.write("{}");
 } else if (command.startsWith("plugin list")) {
   const available = state.marketplace
-    ? [{name:"svt-jewelry-design",marketplaceName:"jewelry-design-codex",version:state.available}]
+    ? ["svt-jewelry-design","svt-jewelry-video","svt-jewelry-feishu"].map((name)=>({name,marketplaceName:"jewelry-design-codex",version:versionForRef(state.ref)}))
     : [];
   process.stdout.write(JSON.stringify({installed:installed(),available}));
 } else if (command.startsWith("plugin add")) {
-  state.installed = true; state.version = state.available; save(); process.stdout.write("{}");
+  const pluginId=args[2]; const version=versionForRef(state.ref);
+  if(process.env.FAKE_FAIL_TARGET_CORE==="1"&&pluginId==="svt-jewelry-design@jewelry-design-codex"&&version==="0.2.0")process.exit(7);
+  state.plugins[pluginId]={version,enabled:true}; save(); process.stdout.write("{}");
 } else if (command.startsWith("plugin remove")) {
-  state.installed = false; save(); process.stdout.write("{}");
+  delete state.plugins[args[2]]; save(); process.stdout.write("{}");
 } else if (command.startsWith("mcp get")) {
-  if (!state.installed) process.exit(1);
+  if (!state.plugins["svt-jewelry-design@jewelry-design-codex"]) process.exit(1);
   process.stdout.write(JSON.stringify({name:"svt_jewelry_ui",enabled:true}));
 } else {
   process.stdout.write("{}");
@@ -159,7 +166,7 @@ test("MCP stdio server starts from a path with spaces and non-ASCII characters",
   const result = runNode([MCP_SERVER, "--stdio"], { input: `${request}\n` });
   assert.equal(result.status, 0, result.stderr);
   const response = JSON.parse(result.stdout.trim());
-  assert.deepEqual(response.result.serverInfo, { name: "svt_jewelry_ui", version: "0.1.1" });
+  assert.deepEqual(response.result.serverInfo, { name: "svt_jewelry_ui", version: "0.2.0" });
 });
 
 test("MCP compacts oversized PNG previews with bundled cross-platform code", () => {
@@ -330,7 +337,7 @@ test("bootstrap restores a disabled core plugin and uninstall still removes it",
   }
 });
 
-test("lifecycle remains idempotent across install, update, and uninstall", () => {
+test("lifecycle remains idempotent across install, current-version update, and uninstall", () => {
   const directory = mkdtempSync(join(tmpdir(), "jdc-stateful-codex-"));
   try {
     const codex = statefulFakeCodex(directory);
@@ -345,8 +352,11 @@ test("lifecycle remains idempotent across install, update, and uninstall", () =>
     assert.deepEqual(repeat.actions, []);
 
     const update = JSON.parse(runNode([JDC, "update", "--json"], { env }).stdout);
-    assert.equal(update.status, "restart_required");
-    assert.deepEqual(update.actions.map(({ label }) => label), ["upgrade marketplace", "refresh plugin"]);
+    assert.equal(update.status, "ready");
+    assert.equal(update.migration, "already-current");
+    assert.equal(update.fromVersion, "0.2.0");
+    assert.equal(update.toVersion, "0.2.0");
+    assert.deepEqual(update.actions.map(({ label }) => label), ["verify v0.2.0 marketplace"]);
 
     const remove = JSON.parse(runNode([JDC, "uninstall", "--json"], { env }).stdout);
     assert.equal(remove.status, "restart_required");
@@ -358,6 +368,63 @@ test("lifecycle remains idempotent across install, update, and uninstall", () =>
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }
+});
+
+test("update migrates v0.1.1 to v0.2.0 and restores enabled optional plugins", () => {
+  const directory = mkdtempSync(join(tmpdir(), "jdc-migration-"));
+  try {
+    const codex = statefulFakeCodex(directory, {
+      marketplace: true, ref: "v0.1.1",
+      plugins: {
+        "svt-jewelry-design@jewelry-design-codex": { version: "0.1.1", enabled: true },
+        "svt-jewelry-video@jewelry-design-codex": { version: "0.1.1", enabled: true },
+        "svt-jewelry-feishu@jewelry-design-codex": { version: "0.1.1", enabled: false },
+      },
+    });
+    const result = runNode([JDC, "update", "--json"], { env: { ...process.env, JDC_CODEX_BIN: codex } });
+    assert.equal(result.status, 0, `${result.stderr}\n${result.stdout}`);
+    const output = JSON.parse(result.stdout);
+    assert.equal(output.status, "restart_required");
+    assert.equal(output.fromVersion, "0.1.1");
+    assert.equal(output.toVersion, "0.2.0");
+    assert.equal(output.rolledBack, false);
+    assert.deepEqual(output.restoredPlugins, [
+      "svt-jewelry-design@jewelry-design-codex",
+      "svt-jewelry-video@jewelry-design-codex",
+    ]);
+  } finally { rmSync(directory, { recursive: true, force: true }); }
+});
+
+test("update rolls back to the previous fixed release when target installation fails", () => {
+  const directory = mkdtempSync(join(tmpdir(), "jdc-rollback-"));
+  try {
+    const codex = statefulFakeCodex(directory, {
+      marketplace: true, ref: "v0.1.1",
+      plugins: { "svt-jewelry-design@jewelry-design-codex": { version: "0.1.1", enabled: true } },
+    });
+    const result = runNode([JDC, "update", "--json"], {
+      env: { ...process.env, JDC_CODEX_BIN: codex, FAKE_FAIL_TARGET_CORE: "1" },
+    });
+    assert.equal(result.status, 1);
+    const output = JSON.parse(result.stdout);
+    assert.equal(output.status, "blocked");
+    assert.equal(output.rolledBack, true);
+    assert.equal(output.fromVersion, "0.1.1");
+  } finally { rmSync(directory, { recursive: true, force: true }); }
+});
+
+test("update stops on a conflicting marketplace source without mutations", () => {
+  const directory = mkdtempSync(join(tmpdir(), "jdc-update-conflict-"));
+  try {
+    const result = runNode([JDC, "update", "--json"], {
+      env: { ...process.env, JDC_CODEX_BIN: fakeCodex(directory), FAKE_CODEX_MODE: "conflict" },
+    });
+    assert.equal(result.status, 1);
+    const output = JSON.parse(result.stdout);
+    assert.match(output.reason, /different source/);
+    assert.deepEqual(output.actions, []);
+    assert.equal(output.rolledBack, false);
+  } finally { rmSync(directory, { recursive: true, force: true }); }
 });
 
 test("plugin-local command router delegates to bundled Python tools", () => {

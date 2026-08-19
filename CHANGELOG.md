@@ -4,9 +4,18 @@ All notable changes to JewelryDesignCodex are documented here. The project follo
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-19
+
 ### Changed
 
-- Public release preparation, portability verification, and documentation hardening.
+- Grill Me now completes four deliberate discovery stages before brief confirmation.
+- Grill Me asks for an explicit delivery count and supports one, two, four, eight, or a custom count.
+- Multi-image briefs compile named candidates with materially different silhouettes, setting architecture, motif translation, material craft, and negative space while preserving the shared design identity.
+
+### Added
+
+- Permanent one-prompt `UPDATE.md` flow for safe fixed-release migration.
+- Observable update results with source and target versions, migration mode, restored optional plugins, and verified rollback state.
 
 ## [0.1.1] - 2026-08-16
 
@@ -27,6 +36,7 @@ All notable changes to JewelryDesignCodex are documented here. The project follo
 - macOS and native Windows support for the core install.
 - Apache-2.0 source license with a separate SVT trademark policy.
 
-[Unreleased]: https://github.com/yuyou-dev/JewelryDesignCodex/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/yuyou-dev/JewelryDesignCodex/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/yuyou-dev/JewelryDesignCodex/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/yuyou-dev/JewelryDesignCodex/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/yuyou-dev/JewelryDesignCodex/releases/tag/v0.1.0

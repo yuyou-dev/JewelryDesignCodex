@@ -20,6 +20,11 @@ flowchart LR
 
 `.agents/plugins/marketplace.json` exposes versioned plugins under the marketplace name `jewelry-design-codex`. Codex clones and caches the marketplace through its own plugin commands. Installation does not copy credentials or manually edit Codex configuration.
 
+Each public install is pinned to a release tag. [UPDATE.md](../UPDATE.md) clones the next exact tag,
+records the installed core and optional plugin set, replaces the fixed-ref marketplace, restores that
+set, and verifies the target version. If replacement fails, the updater attempts to restore the
+previous tag and reports the rollback outcome. Marketplace operations never target user workspaces.
+
 ### Core plugin
 
 `svt-jewelry-design` is the default install:
@@ -67,4 +72,4 @@ Only files explicitly attached to the active task are eligible for provider uplo
 
 The supported core path uses Node.js 20+ and Python 3.10+ without a runtime package install. Launchers resolve the plugin root and executables without POSIX-only shell assumptions. Paths are passed as argument vectors and must support spaces, Windows separators, and UTF-8 names.
 
-See [INSTALL.md](../INSTALL.md) for lifecycle behavior and [SECURITY.md](../SECURITY.md) for reporting.
+See [INSTALL.md](../INSTALL.md) for first installation, [UPDATE.md](../UPDATE.md) for version migration, and [SECURITY.md](../SECURITY.md) for reporting.

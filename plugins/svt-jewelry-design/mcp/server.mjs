@@ -7,7 +7,7 @@ import readline from "node:readline";
 import { fileURLToPath } from "node:url";
 import { compactImage } from "./portable-image.mjs";
 
-const SERVER_VERSION = "0.1.1";
+const SERVER_VERSION = "0.2.0";
 const RESOURCE_URI = "ui://svt-jewelry/followup-questions/v4.html";
 const COMPARISON_RESOURCE_URI = "ui://svt-jewelry/retouch-comparison/v10.html";
 const REMIX_BRIEF_RESOURCE_URI = "ui://svt-jewelry/remix-brief/v7.html";
@@ -90,7 +90,7 @@ const formTool = {
   name: "ask_jewelry_followup_questions",
   title: "Ask jewelry follow-up questions",
   description:
-    "Render one compact adaptive jewelry-design clarification card in Codex or another MCP Apps host. Ordinary clarification uses one consolidated round only. The narrow jewelry-grill-me exception may call this tool across multiple rounds, with at most four unresolved questions per round, until the user confirms the shared brief. Use only when answers change product identity or workflow; never ask for provider cost or internal job selection. Supports text, single-select, multi-select, explicit __other__ options, and one visual-choice field with up to eight self-contained or task-local previews. No file upload fields.",
+    "Render one compact adaptive jewelry-design clarification card in Codex or another MCP Apps host. Ordinary clarification uses one consolidated round only. The narrow jewelry-grill-me exception completes four discovery rounds plus confirmation, with at most four unresolved questions per round; it may ask delivery_count once when absent and must define wide candidate variation before confirming the shared brief. Use only when answers change product identity or workflow; never ask for provider cost, concurrency, or internal job selection. Supports text, single-select, multi-select, explicit __other__ options, and one visual-choice field with up to eight self-contained or task-local previews. No file upload fields.",
   inputSchema: {
     type: "object",
     required: ["title", "fields"],

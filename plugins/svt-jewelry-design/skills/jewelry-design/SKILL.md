@@ -40,7 +40,7 @@ Create new jewelry design directions while preserving professional jewelry vocab
 7. Create two to four variants when the user has not fixed material or style.
 8. For normal designer-facing design requests, assume a visual output is useful. Build a complete professional Image-2 prompt using `$jewelry-studio` prompt guidance and render when available, unless the user explicitly asks for text only.
 9. For counted requests, treat the count as committed. "设计 33 款" means create 33 deliverables; do not ask the user to choose IDs or pick a first batch unless they explicitly ask for selection.
-10. For option sets, similar styles, style collections, or series extensions, each concept should have enough design detail to support image generation, and image generation should be attempted for the requested count when available. One concept requires one separate image artifact or one recorded generation attempt; a contact sheet, collage, or multi-panel preview is not a substitute unless the user explicitly requested a grid/contact sheet.
+10. For option sets, similar styles, style collections, or series extensions, each concept should have enough design detail to support image generation, and image generation should be attempted for the requested count when available. One concept requires one separate image artifact or one recorded generation attempt; a contact sheet, collage, or multi-panel preview is not a substitute unless the user explicitly requested a grid/contact sheet. When an accepted Grill Me brief requests multiple images, preserve its locked facts and compile its named candidate matrix before registering jobs. Every candidate must differ on at least three visible design axes such as silhouette, setting architecture, motif translation, stone layout, negative space, or material craft; changing only adjectives, crop, background, or camera angle does not create a distinct design.
 11. If the user asks for a visual, "出图", "生成图片", "render", "画出来", or similar, treat same-turn rendering as required when image generation is available.
 12. When the user explicitly requests critique or revision, use `$jewelry-image-review` and preserve
     locked elements in the revision brief. Do not run it automatically after generation.
@@ -69,6 +69,8 @@ Create new jewelry design directions while preserving professional jewelry vocab
 - When references are used, include their task-local paths or source citations as inspiration
   evidence for downstream Image-2 work.
 - For production option sets, include a recommended `交付等级`, per-style visual direction, and image-generation status for the requested count.
+- For a multi-image Grill Me brief, include the candidate branch name, its three or more changed
+  axes, and the shared locked facts carried across the set.
 - For counted production option sets, track per-design image status. The final answer must not imply completion if fewer than N separate images or N recorded generation attempts exist.
 - For one to twelve completed ordinary design images, prefer `show_jewelry_design_gallery`; keep
   full inline delivery as the required fallback and for sets larger than twelve.
@@ -84,5 +86,7 @@ Create new jewelry design directions while preserving professional jewelry vocab
 - Confirm a render request is not using a shortened summary instead of the complete professional prompt.
 - Confirm a counted production request was not downgraded into an ID-selection workflow.
 - Confirm a counted production request was not downgraded into a contact-sheet, collage, or combined-preview workflow unless the user explicitly requested that output shape.
+- Confirm multi-image Grill Me candidates are structurally distinct rather than prompt paraphrases
+  or presentation-only changes.
 - Confirm a successful design Gallery received every completed item with its real runner id and was
   not followed by duplicate inline images.
