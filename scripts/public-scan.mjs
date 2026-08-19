@@ -43,13 +43,15 @@ const candidates = files();
 const findings = [];
 
 try {
-  const identities = execFileSync("git", ["log", "--format=%ae%x00%ce", "--all"], {
+  // GitHub Actions checks pull requests through a synthetic merge commit that is never published
+  // to the protected, linear-history main branch. Scan every real (non-merge) source commit.
+  const identities = execFileSync("git", ["log", "--no-merges", "--format=%ae%x00%ce", "--all"], {
     cwd: repository,
     encoding: "utf8",
   }).split("\n").filter(Boolean);
   for (const identity of identities) {
     for (const email of identity.split("\0")) {
-      if (email && !email.endsWith("@users.noreply.github.com")) {
+      if (email && email !== "noreply@github.com" && !email.endsWith("@users.noreply.github.com")) {
         findings.push({ file: ".git", rule: "public commit email must use GitHub noreply" });
       }
     }
