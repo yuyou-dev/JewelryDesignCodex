@@ -9,6 +9,12 @@ const ignoredContentFiles = new Set([
   "scripts/public-scan.mjs",
   "tests/public-release.test.mjs",
 ]);
+// Verified through GitHub's public-emails API for yuyou-dev. Public profile identity is allowed;
+// machine-local, private, or unverified addresses remain forbidden.
+const allowedCommitEmails = new Set([
+  "noreply@github.com",
+  "yy18314@gmail.com",
+]);
 const forbiddenNames = [
   /(?:^|\/)(?:\.DS_Store|__pycache__)(?:\/|$)/,
   /\.pyc$/,
@@ -51,8 +57,8 @@ try {
   }).split("\n").filter(Boolean);
   for (const identity of identities) {
     for (const email of identity.split("\0")) {
-      if (email && email !== "noreply@github.com" && !email.endsWith("@users.noreply.github.com")) {
-        findings.push({ file: ".git", rule: "public commit email must use GitHub noreply" });
+      if (email && !allowedCommitEmails.has(email) && !email.endsWith("@users.noreply.github.com")) {
+        findings.push({ file: ".git", rule: "public commit email must be GitHub noreply or an approved public profile address" });
       }
     }
   }
