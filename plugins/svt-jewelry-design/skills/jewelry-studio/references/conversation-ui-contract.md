@@ -14,20 +14,23 @@ composition, responsive layout, scrolling, accessibility, media presentation, an
    an output family such as still images versus video.
 2. Do not ask about choices that can be handled with a tasteful, reversible default. State the
    assumption briefly and continue.
-3. Do not turn delivery count, batch size, provider cost, or internal job selection into a form.
-   Counted requests remain committed delivery counts unless the user explicitly asks for a shortlist
-   or staged approval.
+3. Do not turn delivery count, batch size, provider cost, or internal job selection into an ordinary
+   clarification form. Counted requests remain committed delivery counts unless the user explicitly
+   asks for a shortlist or staged approval.
 4. For ordinary partial ambiguity, ask at most one consolidated clarification round before
    execution. A later question is justified only by new evidence, a provider blocker, or an
    irreversible choice that could not have been known earlier.
 
 `$jewelry-grill-me` is the narrow multi-round exception. Enter it only when the user explicitly asks
 for Grill Me 珠宝 or a deeper guided interview, or when the request and attachments reveal no
-usable workflow, product identity, or output family. Ask no more than four unresolved fields per
-round, summarize established answers after each submission, and never ask a resolved field again.
-Once the workflow can execute without guessing product identity, destructive preservation intent,
-required source assets, or output family, present one shared brief and obtain explicit confirmation
-before execution. Do not start provider work during Grill Me.
+usable workflow, product identity, or output family. Complete four discovery rounds—foundation,
+meaning, design language, then variation and delivery—before a separate confirmation round, and ask no more than four unresolved fields per round. Summarize established answers after each submission,
+and never ask a resolved field again. A known fact moves that stage to a deeper decision rather than
+removing the stage. Grill Me may ask `delivery_count` once when no count is known, using 1, 2, 4, 8,
+or a custom value; this narrow exception defines the desired visual exploration and does not permit
+provider, cost, concurrency, or internal batch questions. Present one shared brief with locked facts,
+flexible axes, and visibly separated candidate branches, then obtain explicit confirmation before
+execution. Do not start provider work during Grill Me.
 
 A known workflow with missing fields remains ordinary clarification. For example, “开启随手画”
 with no jewelry category gets one dynamic form and must not silently default to a ring, pendant, or
@@ -78,9 +81,11 @@ the user's words or attachments. Prefer no more than four fields in one card.
 | `workflow_family` | single | Grill Me cannot infer the intended workflow | new design, remix, sketch, local edit, retouch, try-on, campaign |
 | `jewelry_type` | single | Product identity is unknown | ring, necklace, earrings, bracelet, brooch, other |
 | `starting_point` | single | Grill Me needs to establish the source of truth | text idea, product image, gemstone, sketch, selected result, model image |
+| `delivery_count` | single | Grill Me has no explicit visual count | 1, 2, 4, 8, other custom count |
 | `design_mode` | single | An attachment could mean preservation or inspiration | preserve, redesign, inspiration |
 | `design_system` | single | Gold versus gem-set changes the design language | gold, gem-set |
 | `style_direction` | single | Style changes the whole concept family | minimal, botanical, art_deco, oriental, other |
+| `variation_axes` | multi | Grill Me will produce more than one image | silhouette, setting, motif, stone layout, negative space, material craft |
 | `hero_material` | text | The focal stone/material is essential and absent | Free text with an example placeholder |
 | `deliverables` | multi | The user asks for a campaign but not its output family | product still, model image, poster, video |
 | `aspect_ratio` | single | A platform-specific output is required | 1:1, 3:4, 9:16, 16:9 |

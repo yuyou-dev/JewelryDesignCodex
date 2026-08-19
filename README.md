@@ -37,6 +37,22 @@ JewelryDesignCodex 是一个适用于 Codex Desktop 的开源珠宝设计插件�
 
 Codex 会先检查环境和权限，再安装 `jewelry-design-codex` marketplace 与 `svt-jewelry-design` 插件，运行 doctor，最后请你重启 Codex。详细步骤见 [INSTALL.md](INSTALL.md)。
 
+## 一句话更新
+
+已经安装过 JewelryDesignCodex？在 Codex Desktop 的新任务中发送：
+
+```text
+/goal Read https://raw.githubusercontent.com/yuyou-dev/JewelryDesignCodex/main/UPDATE.md to safely update and verify my existing JewelryDesignCodex installation, preserve my projects, and tell me when to restart Codex.
+```
+
+中文提示词：
+
+```text
+/goal 请阅读 https://raw.githubusercontent.com/yuyou-dev/JewelryDesignCodex/main/UPDATE.md，安全更新并验证我现有的 JewelryDesignCodex，保留我的项目与图片，并告诉我何时需要重启 Codex。
+```
+
+更新流程会从精确的 `v0.2.0` tag 运行可回滚迁移，恢复此前已启用的视频/飞书扩展，不会删除设计任务、对话或生成图片。首次安装请继续使用上方 `INSTALL.md`；已有安装才使用 [UPDATE.md](UPDATE.md)。
+
 ## 能做什么
 
 | 工作流 | 对话与 Apps UI |
@@ -74,7 +90,7 @@ Codex 会先检查环境和权限，再安装 `jewelry-design-codex` marketplace
 | Apps UI 与本地 MCP | 支持 | 支持 | 未验收 | 不支持 |
 | gpt-image-2 生成 | 支持 | 支持 | 未验收 | 不支持 |
 
-当前稳定版：`v0.1.1`。升级、卸载和状态修复见 [INSTALL.md](INSTALL.md#maintenance)与 [Troubleshooting](docs/TROUBLESHOOTING.md)。
+当前稳定版：`v0.2.0`。升级见 [UPDATE.md](UPDATE.md)，卸载和状态修复见 [INSTALL.md](INSTALL.md#maintenance) 与 [Troubleshooting](docs/TROUBLESHOOTING.md)。
 
 ## 默认插件与可选扩展
 

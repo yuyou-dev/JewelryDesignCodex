@@ -49,7 +49,7 @@ test("public plugin manifests are versioned, licensed, and point at the public r
   for (const pluginRoot of [coreRoot, ...optionalRoots]) {
     const manifest = readJson(path.join(pluginRoot, ".codex-plugin", "plugin.json"));
     assert.equal(manifest.name, path.basename(pluginRoot));
-    assert.equal(manifest.version, "0.1.1");
+    assert.equal(manifest.version, "0.2.0");
     assert.equal(manifest.license, "Apache-2.0");
     assert.equal(manifest.repository, "https://github.com/yuyou-dev/JewelryDesignCodex");
     assert.equal(manifest.homepage, "https://github.com/yuyou-dev/JewelryDesignCodex");

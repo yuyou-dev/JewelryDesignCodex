@@ -1,6 +1,6 @@
 # JewelryDesignCodex Installation Runbook
 
-This runbook is written for Codex. Follow it in order when a user asks you to install, verify, update, or remove JewelryDesignCodex.
+This runbook is written for Codex. Follow it for a first installation, verification, or removal. An existing installation must use [UPDATE.md](UPDATE.md).
 
 The desired end state is observable: the `svt-jewelry-design@jewelry-design-codex` plugin is installed and enabled, the `svt_jewelry_ui` MCP is registered, the repository doctor reports a non-blocked state, and the user knows that a full Codex restart plus a new task is required.
 
@@ -119,7 +119,7 @@ Interpret the JSON rather than matching human-formatted output.
 When the official marketplace is absent, run:
 
 ```text
-codex plugin marketplace add yuyou-dev/JewelryDesignCodex --ref v0.1.1 --json
+codex plugin marketplace add yuyou-dev/JewelryDesignCodex --ref v0.2.0 --json
 ```
 
 Then rerun `codex plugin marketplace list --json`. Continue only when one entry has:
@@ -201,22 +201,9 @@ Follow the installed extension's own authentication instructions and report its 
 
 ### Update
 
-Read current state first, then run:
-
-```text
-node <marketplace-root>/scripts/jdc.mjs update --json
-node <marketplace-root>/scripts/jdc.mjs doctor --json
-```
-
-The lifecycle update refreshes marketplace `jewelry-design-codex` and asks Codex to install a newer
-packaged plugin only when one is available. It never removes the working plugin first, so a failed
-refresh leaves the previous version installed. User workspaces stay intact.
-
-The v0.1.1 marketplace is deliberately pinned to `v0.1.1`; `update` refreshes that release and does
-not silently move across release tags. To move to a later release, read that release's `INSTALL.md`,
-show the old and new refs, obtain approval, and use Codex CLI marketplace commands to replace the
-source ref. Do not infer or automatically follow the newest tag. After any successful version
-change, require a full Codex restart and a new task.
+Do not maintain a second update procedure here. Read the permanent [UPDATE.md](UPDATE.md) Runbook,
+which clones the exact target release, preserves enabled optional plugins, performs the fixed-ref
+migration, verifies rollback on failure, and requires a full Codex restart plus a new task.
 
 ### Uninstall
 
